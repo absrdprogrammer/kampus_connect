@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:kampus_connect/pages/onboarding.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:kampus_connect/auth/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:kampus_connect/pages/home.dart';
+import 'package:kampus_connect/pages/login.dart';
+import 'package:kampus_connect/pages/onboarding.dart';
+import 'package:kampus_connect/pages/profile.dart';
+import 'package:kampus_connect/pages/register.dart';
+import 'package:kampus_connect/pages/role.dart';
+import 'package:kampus_connect/pages/room_list.dart';
+import 'package:kampus_connect/pages/room_screen.dart';
 import 'firebase_options.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -18,9 +26,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(fontFamily: GoogleFonts.montserrat(fontWeight: FontWeight.w500).fontFamily),
       title: 'Kampus Connect',
       debugShowCheckedModeBanner: false,
-      home: Onboarding(),
+      home: const AuthPage(),
+      initialRoute: '/',
+        routes: {
+          '/home': (context) => const HomeScreen(),
+          '/login': (context) => const LoginPage(),
+          '/signup': (context) => const RegisterPage(),
+        }
     );
   }
+
+  
 }

@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,16 +49,6 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCamyqFcSwxxCYYCfzTCGpcSC_j3yjMOOg',
-    appId: '1:934648548296:web:c12c5dfbc94c58dfdb0efd',
-    messagingSenderId: '934648548296',
-    projectId: 'my-project-825c1',
-    authDomain: 'my-project-825c1.firebaseapp.com',
-    storageBucket: 'my-project-825c1.appspot.com',
-    measurementId: 'G-V3P2JZN64T',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCu1IkwS4L76KB71J-2ht-DtSiUGv1oULA',
     appId: '1:934648548296:android:4c50dc7fabd19b24db0efd',
@@ -68,14 +64,5 @@ class DefaultFirebaseOptions {
     projectId: 'my-project-825c1',
     storageBucket: 'my-project-825c1.appspot.com',
     iosBundleId: 'com.example.kampusConnect',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCtb67pp1G3tcIeJIK9TBgAn3JA5KSIunA',
-    appId: '1:934648548296:ios:4a06f2c88452f79ddb0efd',
-    messagingSenderId: '934648548296',
-    projectId: 'my-project-825c1',
-    storageBucket: 'my-project-825c1.appspot.com',
-    iosBundleId: 'com.example.kampusConnect.RunnerTests',
   );
 }

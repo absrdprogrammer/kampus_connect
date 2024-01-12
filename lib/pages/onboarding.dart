@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intro_screen_onboarding_flutter/introduction.dart';
 import 'package:intro_screen_onboarding_flutter/introscreenonboarding.dart';
 import 'package:kampus_connect/pages/login.dart';
+import 'package:kampus_connect/pages/role.dart';
 
 class Onboarding extends StatelessWidget {
   final List<Introduction> list = [
     Introduction(
-      title: 'Find Interesting News',
+      title: 'Find Information',
       subTitle: 'Explore the latest and most up-to-date news information',
       imageUrl: 'assets/images/news-image.png',
     ),
@@ -17,7 +18,7 @@ class Onboarding extends StatelessWidget {
     ), 
     Introduction(
       title: 'Create Your Team',
-      subTitle: 'Find your team and collectively build your project with seamless collaboration.',
+      subTitle: 'Find your team and collectively build your project with seamless collaboration',
       imageUrl: 'assets/images/team-image.png',
     ),
     Introduction(
@@ -26,6 +27,8 @@ class Onboarding extends StatelessWidget {
       imageUrl: "assets/images/report-image.png",
     ),   
   ];
+
+  Onboarding({super.key});
   @override
   Widget build(BuildContext context) {
     return IntroScreenOnboarding(
@@ -35,11 +38,11 @@ class Onboarding extends StatelessWidget {
       onTapSkipButton: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const LoginPage(),
+            builder: (context) => const RolePage(),
           )),
       skipTextStyle: const TextStyle(
         color: Color.fromARGB(255, 52, 130, 169),
-        fontSize: 18,
+        fontSize: 10,
       ),
     );
   }
