@@ -141,7 +141,8 @@ class _AddNewpostState extends State<AddAnnouncement> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: const Text('Cancel'),
+                    child: const Text('Cancel'
+                    ),
                   ),
                 ),
                 const Gap(20),

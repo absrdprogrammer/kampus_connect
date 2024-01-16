@@ -80,13 +80,66 @@ class _InformationPageState extends State<InformationPage> {
     super.initState();
   }
 
+  int _currentPageIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
           backgroundColor: kLighterWhite,
-          body: const HomePage(),
+          bottomNavigationBar: NavigationBarTheme(
+            data: NavigationBarThemeData(
+              labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
+                  (Set<MaterialState> states) =>
+                      const TextStyle(color: Colors.grey)),
+            ),
+            child: NavigationBar(
+              onDestinationSelected: (int index) {
+                setState(() {
+                  _currentPageIndex = index;
+                });
+              },
+              elevation: 32,
+              height: 64,
+              surfaceTintColor: Colors.white54,
+              backgroundColor: Colors.white54,
+              shadowColor: Colors.black,
+              selectedIndex: _currentPageIndex,
+              destinations: const <Widget>[
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.home, color: Colors.grey),
+                  icon: Icon(Icons.home_outlined),
+                  label: 'Home',
+                ), NavigationDestination(
+                  selectedIcon: Icon(Icons.group, color: Colors.grey),
+                  icon: Icon(Icons.group_outlined),
+                  label: 'Community',
+                ),
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.rss_feed, color: Colors.grey),
+                  icon: Icon(Icons.rss_feed_outlined),
+                  label: 'Feed',
+                ),
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.person, color: Colors.grey),
+                  icon: Icon(Icons.person_outlined),
+                  label: 'Profile',
+                ),
+              ],
+            ),
+          ),
+          body: [
+          // Home
+          const HomePage(),
+          // Community
+          const SocialPage(),
+          // Feed
+          InformationListPage(isAdmin: isAdmin),
+          // Profile
+          const SocialPage()
+        ][_currentPageIndex],
+        extendBody: true,
           // bottomNavigationBar: BottomNavigationBar(
           //   elevation: 0,
           //   type: BottomNavigationBarType.fixed,
@@ -121,44 +174,7 @@ class _InformationPageState extends State<InformationPage> {
           //   currentIndex: _selectedIndex,
           //   onTap: _onItemTapped,
           // ),
-          floatingActionButton: Visibility(
-            visible: isAdmin,
-            child: SpeedDial(
-              animatedIcon: AnimatedIcons.menu_close,
-              children: [
-                SpeedDialChild(
-                  child: const Icon(Icons.newspaper),
-                  label: "Post Information",
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => PostPage()));
-                  },
-                  labelStyle:
-                      const TextStyle(fontSize: 18, color: Colors.white),
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  labelBackgroundColor: Colors.green,
-                ),
-                SpeedDialChild(
-                  child: const Icon(Icons.info),
-                  label: "Post Announcement",
-                  onTap: () => showModalBottomSheet(
-                    isScrollControlled: true,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    context: context,
-                    builder: (context) => AddAnnouncement(),
-                  ),
-                  labelStyle:
-                      const TextStyle(fontSize: 18, color: Colors.white),
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  labelBackgroundColor: Colors.red,
-                ),
-              ],
-            ),
-          )),
+          ),
     );
   }
 }
