@@ -18,6 +18,7 @@ import 'package:kampus_connect/pages/login.dart';
 import 'package:kampus_connect/pages/news_detail_screen.dart';
 import 'package:kampus_connect/pages/news_list.dart';
 import 'package:kampus_connect/pages/post_information.dart';
+import 'package:kampus_connect/pages/profile.dart';
 import 'package:kampus_connect/pages/social.dart';
 import 'package:kampus_connect/widgets/announcement_modal.dart';
 import 'package:kampus_connect/widgets/edit.dart';
@@ -31,37 +32,6 @@ class InformationPage extends StatefulWidget {
 
 class _InformationPageState extends State<InformationPage> {
   FirestoreDatabase database = FirestoreDatabase();
-  // int _selectedIndex = 0;
-
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-
-  //     switch (_selectedIndex) {
-  //       case 0:
-  //         Navigator.push(context,
-  //             MaterialPageRoute(builder: (context) => const HomePage()));
-  //         break;
-  //       case 1:
-  //         {
-  //           Navigator.push(context,
-  //               MaterialPageRoute(builder: (context) => const SocialPage()));
-  //         }
-  //         break;
-  //     }
-  //   });
-  // }
-
-  // final List<Widget> _pages = [
-  //   const HomePage(),
-  //   const SocialPage(),
-  //   const Center(
-  //     child: Text("Test"),
-  //   ),
-  //   const Center(
-  //     child: Text("Test"),
-  //   )
-  // ];
   String role = '';
   bool isAdmin = false;
 
@@ -137,7 +107,7 @@ class _InformationPageState extends State<InformationPage> {
           // Feed
           InformationListPage(isAdmin: isAdmin),
           // Profile
-          const SocialPage()
+          const ProfileScreen()
         ][_currentPageIndex],
         extendBody: true,
           // bottomNavigationBar: BottomNavigationBar(

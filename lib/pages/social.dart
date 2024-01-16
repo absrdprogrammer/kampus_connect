@@ -23,91 +23,20 @@ class SocialPage extends StatefulWidget {
 class _InformationPageState extends State<SocialPage> {
   final isLiked = false;
 
-  // int _selectedIndex = 0;
-
-  // void _onItemTapped(int index) {
-  //   _selectedIndex = index;
-  //   print(_selectedIndex);
-
-  //   setState(() {
-  //     switch (_selectedIndex) {
-  //       case 0:
-  //         Navigator.push(context,
-  //             MaterialPageRoute(builder: (context) => const HomePage()));
-  //         break;
-  //       case 1:
-  //         {
-  //           Navigator.push(context,
-  //               MaterialPageRoute(builder: (context) => const SocialPage()));
-  //         }
-  //         break;
-  //     }
-  //   });
-  // }
-
-  // final List<Widget> _pages = [
-  //   const InformationPage(),
-  //   const SocialHomePage(),
-  //   const Center(
-  //     child: Text("Test"),
-  //   ),
-  //   const Center(
-  //     child: Text("Test"),
-  //   )
-  // ];
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           appBar: AppBar(
-            title: Row(
+            title: const Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                const Text("Social Room"),
+                Text("Social Room"),
               ],
             ),
           ),
           backgroundColor: kLighterWhite,
           body: const SocialHomePage(),
-          // bottomNavigationBar: BottomNavigationBar(
-          //   elevation: 0,
-          //   type: BottomNavigationBarType.fixed,
-          //   backgroundColor: kWhite,
-          //   items: <BottomNavigationBarItem>[
-          //     BottomNavigationBarItem(
-          //       icon: _selectedIndex == 0
-          //           ? SvgPicture.asset('assets/images/home_selected_icon.svg')
-          //           : SvgPicture.asset(
-          //               'assets/images/home_unselected_icon.svg'),
-          //       label: '',
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: _selectedIndex == 1
-          //           ? Icon(CupertinoIcons.chat_bubble_2_fill)
-          //           : Icon(CupertinoIcons.chat_bubble_2),
-          //       label: '',
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: _selectedIndex == 2
-          //           ? Icon(CupertinoIcons.info_circle_fill)
-          //           : Icon(CupertinoIcons.info_circle),
-          //       label: '',
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: _selectedIndex == 3
-          //           ? Icon(Icons.logout)
-          //           : Icon(Icons.logout),
-          //       label: '',
-          //     ),
-          //   ],
-          //   currentIndex: _selectedIndex,
-          //   onTap: _onItemTapped,
-          // ),
         ));
   }
 }
