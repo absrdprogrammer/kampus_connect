@@ -62,7 +62,9 @@ class _InformationPageState extends State<InformationPage> {
             data: NavigationBarThemeData(
               labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
                   (Set<MaterialState> states) =>
-                      const TextStyle(color: Colors.grey)),
+                      const TextStyle(
+                        color: Color.fromARGB(255, 95, 93, 93),
+                    )),
             ),
             child: NavigationBar(
               onDestinationSelected: (int index) {
@@ -78,21 +80,17 @@ class _InformationPageState extends State<InformationPage> {
               selectedIndex: _currentPageIndex,
               destinations: const <Widget>[
                 NavigationDestination(
-                  selectedIcon: Icon(Icons.home, color: Colors.grey),
                   icon: Icon(Icons.home_outlined),
                   label: 'Home',
                 ), NavigationDestination(
-                  selectedIcon: Icon(Icons.group, color: Colors.grey),
                   icon: Icon(Icons.group_outlined),
                   label: 'Community',
                 ),
                 NavigationDestination(
-                  selectedIcon: Icon(Icons.rss_feed, color: Colors.grey),
                   icon: Icon(Icons.rss_feed_outlined),
                   label: 'Feed',
                 ),
                 NavigationDestination(
-                  selectedIcon: Icon(Icons.person, color: Colors.grey),
                   icon: Icon(Icons.person_outlined),
                   label: 'Profile',
                 ),
@@ -110,40 +108,6 @@ class _InformationPageState extends State<InformationPage> {
           const ProfileScreen()
         ][_currentPageIndex],
         extendBody: true,
-          // bottomNavigationBar: BottomNavigationBar(
-          //   elevation: 0,
-          //   type: BottomNavigationBarType.fixed,
-          //   backgroundColor: kWhite,
-          //   items: <BottomNavigationBarItem>[
-          //     BottomNavigationBarItem(
-          //       icon: _selectedIndex == 0
-          //           ? SvgPicture.asset('assets/images/home_selected_icon.svg')
-          //           : SvgPicture.asset(
-          //               'assets/images/home_unselected_icon.svg'),
-          //       label: '',
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: _selectedIndex == 1
-          //           ? Icon(CupertinoIcons.chat_bubble_2_fill)
-          //           : Icon(CupertinoIcons.chat_bubble_2),
-          //       label: '',
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: _selectedIndex == 2
-          //           ? Icon(CupertinoIcons.info_circle_fill)
-          //           : Icon(CupertinoIcons.info_circle),
-          //       label: '',
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: _selectedIndex == 3
-          //           ? Icon(Icons.logout)
-          //           : Icon(Icons.logout),
-          //       label: '',
-          //     ),
-          //   ],
-          //   currentIndex: _selectedIndex,
-          //   onTap: _onItemTapped,
-          // ),
           ),
     );
   }
