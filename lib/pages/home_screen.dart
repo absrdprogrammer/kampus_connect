@@ -14,6 +14,7 @@ import 'package:kampus_connect/models/information.dart';
 import 'package:kampus_connect/models/news.dart';
 import 'package:kampus_connect/models/notification.dart';
 import 'package:kampus_connect/pages/chat_detail_page.dart';
+import 'package:kampus_connect/pages/job/job_screen.dart';
 import 'package:kampus_connect/pages/login.dart';
 import 'package:kampus_connect/pages/news_detail_screen.dart';
 import 'package:kampus_connect/pages/news_list.dart';
@@ -57,58 +58,58 @@ class _InformationPageState extends State<InformationPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-          backgroundColor: kLighterWhite,
-          bottomNavigationBar: NavigationBarTheme(
-            data: NavigationBarThemeData(
-              labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
-                  (Set<MaterialState> states) =>
-                      const TextStyle(
-                        color: Color.fromARGB(255, 95, 93, 93),
+        backgroundColor: kLighterWhite,
+        bottomNavigationBar: NavigationBarTheme(
+          data: NavigationBarThemeData(
+            labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
+                (Set<MaterialState> states) => const TextStyle(
+                      color: Color.fromARGB(255, 95, 93, 93),
                     )),
-            ),
-            child: NavigationBar(
-              onDestinationSelected: (int index) {
-                setState(() {
-                  _currentPageIndex = index;
-                });
-              },
-              elevation: 32,
-              height: 64,
-              surfaceTintColor: Colors.white54,
-              backgroundColor: Colors.white54,
-              shadowColor: Colors.black,
-              selectedIndex: _currentPageIndex,
-              destinations: const <Widget>[
-                NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  label: 'Home',
-                ), NavigationDestination(
-                  icon: Icon(Icons.group_outlined),
-                  label: 'Community',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.rss_feed_outlined),
-                  label: 'Feed',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.person_outlined),
-                  label: 'Profile',
-                ),
-              ],
-            ),
           ),
-          body: [
+          child: NavigationBar(
+            onDestinationSelected: (int index) {
+              setState(() {
+                _currentPageIndex = index;
+              });
+            },
+            elevation: 32,
+            height: 64,
+            surfaceTintColor: Colors.white54,
+            backgroundColor: Colors.white54,
+            shadowColor: Colors.black,
+            selectedIndex: _currentPageIndex,
+            destinations: const <Widget>[
+              NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                label: 'Home',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.group_outlined),
+                label: 'Community',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.rss_feed_outlined),
+                label: 'Feed',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.person_outlined),
+                label: 'Profile',
+              ),
+            ],
+          ),
+        ),
+        body: [
           // Home
           const HomePage(),
           // Community
-          const SocialPage(),
+          const JobScreen(),
           // Feed
           InformationListPage(isAdmin: isAdmin),
           // Profile
           const ProfileScreen()
         ][_currentPageIndex],
         extendBody: true,
-          ),
+      ),
     );
   }
 }
@@ -238,8 +239,10 @@ class _HomePageState extends State<HomePage> {
                 IconButton(
                     onPressed: () {
                       FirebaseAuth.instance.signOut();
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => const LoginPage()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginPage()));
                     },
                     icon: const Icon(Icons.logout))
               ],
