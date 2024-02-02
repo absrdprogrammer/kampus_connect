@@ -16,7 +16,7 @@ class HomeContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: kSpacingUnit * 5),
+            /*SizedBox(height: kSpacingUnit * 5),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: kSpacingUnit * 4),
               child: Row(
@@ -32,12 +32,12 @@ class HomeContent extends StatelessWidget {
                 ],
               ),
             ),
-            const HomePopularJobs(),
+            const HomePopularJobs(),*/
             SizedBox(height: kSpacingUnit * 2),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: kSpacingUnit * 4),
               child: Text(
-                'Recently Added',
+                'Available Jobs',
                 style: kSubTitleTextStyle.copyWith(
                   fontWeight: FontWeight.w600,
                 ),

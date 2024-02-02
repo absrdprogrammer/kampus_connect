@@ -22,7 +22,7 @@ class DetailFooter extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
+            /*Container(
               height: kSpacingUnit * 6,
               width: kSpacingUnit * 8,
               decoration: BoxDecoration(
@@ -38,7 +38,7 @@ class DetailFooter extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: kSpacingUnit * 2),
+            SizedBox(width: kSpacingUnit * 2),*/
             Expanded(
               child: Container(
                 height: kSpacingUnit * 6,

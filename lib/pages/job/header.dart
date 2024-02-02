@@ -16,9 +16,9 @@ class HomeHeader extends StatelessWidget {
         text: TextSpan(
           style: kHeadingTextStyle,
           children: const [
-            TextSpan(text: 'Hey Adam, \n'),
+            //TextSpan(text: 'Hey Adam, \n'),
             TextSpan(
-              text: 'Looking for a Job?',
+              text: 'Find your Job',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),

@@ -14,16 +14,13 @@ class JobScreen extends StatelessWidget {
         designSize: const Size(414, 896), minTextAdapt: true);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Job list'),
-      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // SizedBox(height: kSpacingUnit * 6),
-            // const HomeHeader(),
+            SizedBox(height: kSpacingUnit * 6),
+            const HomeHeader(),
             // SizedBox(height: kSpacingUnit * 3),
             // const HomeSubHeader(),
             SizedBox(height: kSpacingUnit * 3),

@@ -50,12 +50,12 @@ class JobCard extends StatelessWidget {
                       data.companyName!,
                       style: kCardTitleTextStyle,
                     ),
-                    const Spacer(),
+                    /*const Spacer(),
                     SvgPicture.asset(
                       'assets/icons/heart_icon.svg',
                       height: 20.sp,
                       width: 20.sp,
-                    ),
+                    ),*/
                   ],
                 ),
                 const Spacer(),

@@ -44,12 +44,39 @@ final popularJobs = [
     location: 'Singapore, Permanent',
     responsibilities: responsibilities,
     qualifications: qualifications,
-  ),
+  )
 ];
 
 final recentJobs = [
   Job(
     id: 4,
+    companyName: 'Airbnb, Inc.',
+    imgUrl: 'assets/icons/airbnb_logo.svg',
+    position: 'Software Engineer',
+    location: 'Singapore, Permanent, Remote',
+    responsibilities: responsibilities,
+    qualifications: qualifications,
+  ),
+  Job(
+    id: 5,
+    companyName: 'Airbnb, Inc.',
+    imgUrl: 'assets/icons/airbnb_logo.svg',
+    position: 'Lead Product Designer',
+    location: 'Singapore, Permanent, Remote',
+    responsibilities: responsibilities,
+    qualifications: qualifications,
+  ),
+  Job(
+    id: 6,
+    companyName: 'Google LLC',
+    imgUrl: 'assets/icons/google_logo.svg',
+    position: 'Software Engineer',
+    location: 'Singapore, Permanent',
+    responsibilities: responsibilities,
+    qualifications: qualifications,
+  ),
+  Job(
+    id: 7,
     companyName: 'Google LLC',
     imgUrl: 'assets/icons/google_logo.svg',
     position: 'Senior Software Engineer',
@@ -58,7 +85,7 @@ final recentJobs = [
     qualifications: qualifications,
   ),
   Job(
-    id: 5,
+    id: 8,
     companyName: 'Apple Inc.',
     imgUrl: 'assets/icons/apple_logo.svg',
     position: 'Lead Product Designer',
@@ -67,7 +94,7 @@ final recentJobs = [
     qualifications: qualifications,
   ),
   Job(
-    id: 6,
+    id: 9,
     companyName: 'Google LLC',
     imgUrl: 'assets/icons/google_logo.svg',
     position: 'Software Engineer',
