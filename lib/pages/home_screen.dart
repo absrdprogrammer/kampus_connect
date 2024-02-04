@@ -13,7 +13,11 @@ import 'package:kampus_connect/database/firestore.dart';
 import 'package:kampus_connect/models/information.dart';
 import 'package:kampus_connect/models/news.dart';
 import 'package:kampus_connect/models/notification.dart';
+import 'package:kampus_connect/models/post.dart';
 import 'package:kampus_connect/pages/chat_detail_page.dart';
+import 'package:kampus_connect/pages/event.dart';
+import 'package:kampus_connect/pages/feed_page.dart';
+import 'package:kampus_connect/pages/job/job_screen.dart';
 import 'package:kampus_connect/pages/login.dart';
 import 'package:kampus_connect/pages/news_detail_screen.dart';
 import 'package:kampus_connect/pages/news_list.dart';
@@ -22,6 +26,7 @@ import 'package:kampus_connect/pages/profile.dart';
 import 'package:kampus_connect/pages/social.dart';
 import 'package:kampus_connect/widgets/announcement_modal.dart';
 import 'package:kampus_connect/widgets/edit.dart';
+import 'package:kampus_connect/widgets/feed_card.dart';
 
 class InformationPage extends StatefulWidget {
   const InformationPage({Key? key}) : super(key: key);
@@ -57,58 +62,58 @@ class _InformationPageState extends State<InformationPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-          backgroundColor: kLighterWhite,
-          bottomNavigationBar: NavigationBarTheme(
-            data: NavigationBarThemeData(
-              labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
-                  (Set<MaterialState> states) =>
-                      const TextStyle(
-                        color: Color.fromARGB(255, 95, 93, 93),
+        backgroundColor: kLighterWhite,
+        bottomNavigationBar: NavigationBarTheme(
+          data: NavigationBarThemeData(
+            labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
+                (Set<MaterialState> states) => const TextStyle(
+                      color: Color.fromARGB(255, 95, 93, 93),
                     )),
-            ),
-            child: NavigationBar(
-              onDestinationSelected: (int index) {
-                setState(() {
-                  _currentPageIndex = index;
-                });
-              },
-              elevation: 32,
-              height: 64,
-              surfaceTintColor: Colors.white54,
-              backgroundColor: Colors.white54,
-              shadowColor: Colors.black,
-              selectedIndex: _currentPageIndex,
-              destinations: const <Widget>[
-                NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  label: 'Home',
-                ), NavigationDestination(
-                  icon: Icon(Icons.group_outlined),
-                  label: 'Community',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.rss_feed_outlined),
-                  label: 'Feed',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.person_outlined),
-                  label: 'Profile',
-                ),
-              ],
-            ),
           ),
-          body: [
+          child: NavigationBar(
+            onDestinationSelected: (int index) {
+              setState(() {
+                _currentPageIndex = index;
+              });
+            },
+            elevation: 32,
+            height: 64,
+            surfaceTintColor: Colors.white,
+            backgroundColor: Colors.white,
+            shadowColor: Colors.black,
+            selectedIndex: _currentPageIndex,
+            destinations: const <Widget>[
+              NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                label: 'Home',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.group_outlined),
+                label: 'Community',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.rss_feed_outlined),
+                label: 'Feed',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.person_outlined),
+                label: 'Profile',
+              ),
+            ],
+          ),
+        ),
+        body: [
           // Home
           const HomePage(),
           // Community
           const SocialPage(),
           // Feed
-          InformationListPage(isAdmin: isAdmin),
+          FeedPage(),
           // Profile
           const ProfileScreen()
         ][_currentPageIndex],
         extendBody: true,
-          ),
+      ),
     );
   }
 }
@@ -169,7 +174,7 @@ class _HomePageState extends State<HomePage> {
     DateTime dateTime = timestamp.toDate();
     DateFormat dateFormatter = DateFormat('EEEE, d LLLL yyyy');
     date = dateFormatter.format(dateTime);
-    print(date);
+    DateFormat formatter = DateFormat('d LLL');
 
     database.checkUser().then((value) {
       setState(() {
@@ -238,8 +243,10 @@ class _HomePageState extends State<HomePage> {
                 IconButton(
                     onPressed: () {
                       FirebaseAuth.instance.signOut();
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => const LoginPage()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginPage()));
                     },
                     icon: const Icon(Icons.logout))
               ],
@@ -326,39 +333,137 @@ class _HomePageState extends State<HomePage> {
               height: 25,
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _cardMenu(
+                  icon: 'assets/images/job-offer2.png',
+                  title: 'Jobs',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const JobScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _cardMenu(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const EventScreen(),
+                      ),
+                    );
+                  },
+                  icon: 'assets/images/events.png',
+                  title: 'Events',
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'Information',
+                  'Latest Feed',
                   style: kPoppinsBold.copyWith(
                     fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => InformationListPage(
-                                  isAdmin: isAdmin,
-                                )));
-                  },
-                  child: Text(
-                    'View all',
-                    style: kPoppinsMedium.copyWith(
-                      color: kBlue,
-                      fontSize: SizeConfig.blockSizeHorizontal! * 3,
-                    ),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            SizedBox(
+                height: 200,
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection("Posts")
+                        .orderBy('timeStamp', descending: true)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      }
+
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      }
+
+                      List<Post> posts =
+                          snapshot.data!.docs.map((DocumentSnapshot document) {
+                        Map<String, dynamic> data =
+                            document.data() as Map<String, dynamic>;
+                        Timestamp currentTime = Timestamp.now();
+                        return Post(
+                            date: data['timeStamp'] ?? currentTime,
+                            postId: data['postId'],
+                            userId: data['userId'],
+                            username: data['username'],
+                            content: data['content'],
+                            likes: data['likes'],
+                            comments: data['comments']);
+                      }).toList();
+
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: posts.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            Post post = posts[index];
+
+                            DateTime now = DateTime.now();
+                            final postDate = post.date.toDate();
+                            if (postDate.year == now.year &&
+                                postDate.month == now.month &&
+                                postDate.day == now.day) {
+                              date = 'Today';
+                            } else if (postDate.year == now.year &&
+                                postDate.month == now.month &&
+                                postDate.day == now.day - 1) {
+                              date = 'Yesterday';
+                            } else {
+                              DateFormat formatter = DateFormat('d LLL');
+                              date = formatter.format(
+                                  DateTime.fromMicrosecondsSinceEpoch(
+                                      post.date.microsecondsSinceEpoch));
+                            }
+
+                            return FeedCard(
+                              date: date,
+                              username: post.username,
+                              content: post.content,
+                              userId: post.userId,
+                              postId: post.postId,
+                              likes: post.likes,
+                              comments: post.comments,
+                            );
+                          });
+                    })),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Articles',
+                  style: kPoppinsBold.copyWith(
+                    fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
                   ),
-                )
+                ),
               ],
             ),
             const SizedBox(
               height: 10,
             ),
             SizedBox(
-              height: 304,
               child: StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('Informations')
@@ -398,8 +503,9 @@ class _HomePageState extends State<HomePage> {
                     }).toList();
                     return ListView.builder(
                       shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: informations.length,
-                      scrollDirection: Axis.horizontal,
+                      scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
                         Information information = informations[index];
                         return GestureDetector(
@@ -420,7 +526,7 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             padding: const EdgeInsets.all(12),
                             margin: const EdgeInsets.only(
-                              right: 20,
+                              bottom: 20
                             ),
                             height: 304,
                             width: 255,
@@ -564,215 +670,38 @@ class _HomePageState extends State<HomePage> {
                     );
                   }),
             ),
-            const SizedBox(
-              height: 30,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Announcement',
-                  style: kPoppinsBold.copyWith(
-                    fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              child: StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('Announcements')
-                      .orderBy("timeStamp", descending: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    }
+          ],
+        ),
+      ),
+    );
+  }
 
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    }
-
-                    List<Announcement> announcements =
-                        snapshot.data!.docs.map((DocumentSnapshot document) {
-                      Map<String, dynamic> data =
-                          document.data() as Map<String, dynamic>;
-
-                      Timestamp currentTime = Timestamp.now();
-                      return Announcement(
-                        date: data['timeStamp'] ?? currentTime,
-                        id: data['postId'],
-                        title: data['title'],
-                        desc: data['content'],
-                      );
-                    }).toList();
-
-                    return ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      itemCount: announcements.length,
-                      itemBuilder: (context, index) {
-                        Announcement info = announcements[index];
-                        return Container(
-                          padding: const EdgeInsets.all(12),
-                          margin: const EdgeInsets.only(
-                            bottom: 20,
-                          ),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(kBorderRadius),
-                            color: kWhite,
-                            boxShadow: [
-                              BoxShadow(
-                                color: kDarkBlue.withOpacity(0.051),
-                                offset: const Offset(0.0, 3.0),
-                                blurRadius: 24.0,
-                                spreadRadius: 0.0,
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                info.title,
-                                style: kPoppinsBold.copyWith(
-                                  color: Colors.blue,
-                                  fontSize: 15,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              const Divider(
-                                thickness: 1,
-                                color: Colors.black54,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                info.desc,
-                                style: kPoppinsBold.copyWith(
-                                  fontSize: 15,
-                                ),
-                                maxLines: 50,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(
-                                height: 16,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            'Posted:',
-                                            style: kPoppinsSemibold.copyWith(
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          Text(
-                                            dateFormat.format(DateTime
-                                                .fromMicrosecondsSinceEpoch(info
-                                                    .date
-                                                    .microsecondsSinceEpoch)),
-                                            style: kPoppinsRegular.copyWith(
-                                              color: kGrey,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Visibility(
-                                    visible: isAdmin,
-                                    child: PopupMenuButton(
-                                      onSelected: (value) {
-                                        if (value == 'edit') {
-                                          print(info.id);
-                                          showModalBottomSheet(
-                                            isScrollControlled: true,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                            context: context,
-                                            builder: (context) =>
-                                                EditAnnouncement(
-                                              newPostController: info.title,
-                                              postDescription: info.desc,
-                                              postId: info.id,
-                                            ),
-                                          );
-                                          loadPost(info.id);
-
-                                          print("Contents loaded");
-                                        } else if (value == 'delete') {
-                                          FirebaseFirestore.instance
-                                              .collection("Announcements")
-                                              .doc(info.id)
-                                              .delete();
-                                          print('Delete tapped');
-                                        }
-                                      },
-                                      itemBuilder: (BuildContext context) =>
-                                          <PopupMenuEntry<String>>[
-                                        const PopupMenuItem<String>(
-                                          value: 'edit',
-                                          child: ListTile(
-                                            leading: Icon(Icons.edit),
-                                            title: Text('Edit'),
-                                          ),
-                                        ),
-                                        const PopupMenuItem<String>(
-                                          value: 'delete',
-                                          child: ListTile(
-                                            leading: Icon(Icons.delete),
-                                            title: Text('Delete'),
-                                          ),
-                                        ),
-                                      ],
-                                      child: Container(
-                                        height: 38,
-                                        width: 38,
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              kBorderRadius),
-                                          color: kLightWhite,
-                                        ),
-                                        child: SvgPicture.asset(
-                                          'assets/images/dots.svg',
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  }),
-            ),
+  Widget _cardMenu({
+    required String title,
+    required String icon,
+    VoidCallback? onTap,
+    Color color = Colors.white,
+    Color fontColor = Colors.grey,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 36,
+        ),
+        width: 156,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          children: [
+            Image.asset(icon),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: TextStyle(fontWeight: FontWeight.bold, color: fontColor),
+            )
           ],
         ),
       ),

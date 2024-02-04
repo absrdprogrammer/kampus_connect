@@ -36,18 +36,16 @@ class _FeedCardState extends State<FeedCard> {
     if (widget.userId == database.user!.uid) {
       isCreator = true;
     }
-    print(database.user);
-    print(isCreator);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        width: double.infinity,
+        width: 350,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(25.0),
@@ -63,7 +61,7 @@ class _FeedCardState extends State<FeedCard> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Column(
                 children: <Widget>[
                   ListTile(
@@ -162,7 +160,9 @@ class _FeedCardState extends State<FeedCard> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25.0),
                       ),
-                      child: Text(widget.content),
+                      child: Text(widget.content,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,),
                     ),
                   ),
                   Padding(
