@@ -28,29 +28,29 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  flutter:
-    sdk: flutter
-  firebase_core: ^2.22.0
-  simple_animations: ^5.0.2
-  flutter_animated_button: 2.0.3
-  iconsax: ^0.0.8
-  google_fonts: ^6.1.0
-  intro_screen_onboarding_flutter: ^1.0.0
-  cupertino_icons: ^1.0.2
-  intl: ^0.18.1
-  firebase_auth: ^4.14.0
-  cloud_firestore: ^4.13.1
-  firebase_messaging: ^14.7.4
-  line_awesome_flutter: ^2.0.0
-  flutter_svg: ^1.0.3
-  carousel_slider: ^4.2.1
-  image_picker: ^1.0.4
-  random_string: ^2.3.1
-  firebase_storage: ^11.5.2
-  gap: ^3.0.1
-  flutter_speed_dial: ^7.0.0
-  animations: 2.0.8
-  flutter_screenutil: ^5.9.0
+    flutter:
+        sdk: flutter
+    firebase_core: ^2.22.0
+    simple_animations: ^5.0.2
+    flutter_animated_button: 2.0.3
+    iconsax: ^0.0.8
+    google_fonts: ^6.1.0
+    intro_screen_onboarding_flutter: ^1.0.0
+    cupertino_icons: ^1.0.2
+    intl: ^0.18.1
+    firebase_auth: ^4.14.0
+    cloud_firestore: ^4.13.1
+    firebase_messaging: ^14.7.4
+    line_awesome_flutter: ^2.0.0
+    flutter_svg: ^1.0.3
+    carousel_slider: ^4.2.1
+    image_picker: ^1.0.4
+    random_string: ^2.3.1
+    firebase_storage: ^11.5.2
+    gap: ^3.0.1
+    flutter_speed_dial: ^7.0.0
+    animations: 2.0.8
+    flutter_screenutil: ^5.9.0
 
 dev_dependencies:
     flutter_test:
@@ -73,12 +73,11 @@ flutter:
     # the material Icons class.
     uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/images/
-    - assets/icons/
-    - assets/fonts/
-
+    # To add assets to your application, add an assets section, like this:
+    assets:
+        - assets/images/
+        - assets/icons/
+        - assets/fonts/
 
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware
