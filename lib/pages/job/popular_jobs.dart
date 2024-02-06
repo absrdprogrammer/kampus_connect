@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kampus_connect/constants.dart';
-import 'package:kampus_connect/mock_data.dart';
+import 'package:kampus_connect/data/job_data.dart';
 import 'package:kampus_connect/models/job.dart';
 import 'package:kampus_connect/pages/job/detail/detail_screen.dart';
 import 'package:kampus_connect/widgets/job_card.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kampus_connect/constants.dart';
-import 'package:kampus_connect/mock_data.dart';
+import 'package:kampus_connect/data/job_data.dart';
 import 'package:kampus_connect/widgets/job_card.dart';
 
 class HomeRecentJobs extends StatelessWidget {

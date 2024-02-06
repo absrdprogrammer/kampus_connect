@@ -21,8 +21,6 @@ class JobScreen extends StatelessWidget {
           children: [
             SizedBox(height: kSpacingUnit * 6),
             const HomeHeader(),
-            // SizedBox(height: kSpacingUnit * 3),
-            // const HomeSubHeader(),
             SizedBox(height: kSpacingUnit * 3),
             const HomeContent(),
           ],
