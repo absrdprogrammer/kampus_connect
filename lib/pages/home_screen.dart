@@ -106,7 +106,7 @@ class _InformationPageState extends State<InformationPage> {
           // Home
           const HomePage(),
           // Community
-          const JobScreen(),
+          const SocialPage(),
           // Feed
           FeedPage(),
           // Profile
