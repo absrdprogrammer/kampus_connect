@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kampus_connect/data/data.dart';
+import 'package:kampus_connect/database/firestore.dart';
 
 import 'package:kampus_connect/models/date_model.dart';
 import 'package:kampus_connect/models/event_type_model.dart';
@@ -14,6 +15,7 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
+  FirestoreDatabase database = FirestoreDatabase();
   List<DateModel> dates = [
     DateModel(weekDay: "Sun", date: "10"),
     DateModel(weekDay: "Mon", date: "11"),
@@ -51,6 +53,27 @@ class _EventScreenState extends State<EventScreen> {
     // events = getEvents();
   }
 
+  String _getWeekDay(int weekDay) {
+    switch (weekDay) {
+      case 1:
+        return 'Sun';
+      case 2:
+        return 'Mon';
+      case 3:
+        return 'Tue';
+      case 4:
+        return 'Wed';
+      case 5:
+        return 'Thu';
+      case 6:
+        return 'Fri';
+      case 7:
+        return 'Sat';
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,29 +96,16 @@ class _EventScreenState extends State<EventScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      const Spacer(),
-                      Image.asset(
-                        "assets/images/notify.png",
-                        height: 22,
-                        color: Colors.blue,
-                      ),
-                      const SizedBox(
-                        width: 16,
-                      ),
-                    ],
-                  ),
                   const SizedBox(
                     height: 10,
                   ),
-                  const Row(
+                  Row(
                     children: <Widget>[
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "Hello, Sanskar!",
+                            "Hello, ${database.user!.displayName}",
                             style: TextStyle(
                                 color: Colors.blue,
                                 fontWeight: FontWeight.w700,
@@ -186,6 +196,7 @@ class DateTile extends StatelessWidget {
   String weekDay;
   String date;
   bool isSelected;
+
   DateTile(
       {super.key,
       required this.weekDay,

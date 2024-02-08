@@ -362,92 +362,147 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             const SizedBox(
-              height: 20,
+              height: 30,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Latest Feed',
-                  style: kPoppinsBold.copyWith(
-                    fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(kBorderRadius),
+                color: kWhite,
+                boxShadow: [
+                  BoxShadow(
+                    color: kDarkBlue.withOpacity(0.051),
+                    offset: const Offset(0.0, 3.0),
+                    blurRadius: 24.0,
+                    spreadRadius: 0.0,
+                  )
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      style: kPoppinsRegular.copyWith(
+                        color: kBlue,
+                        fontSize: SizeConfig.blockSizeHorizontal! * 3,
+                      ),
+                      controller: TextEditingController(),
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 13,
+                        ),
+                        hintText: 'Search for article...',
+                        border: kBorder,
+                        errorBorder: kBorder,
+                        disabledBorder: kBorder,
+                        focusedBorder: kBorder,
+                        focusedErrorBorder: kBorder,
+                        hintStyle: kPoppinsRegular.copyWith(
+                          color: kLightGrey,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 3,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(kBorderRadius),
+                    ),
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: SvgPicture.asset(
+                        'assets/images/search_icon.svg',
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            SizedBox(
-                height: 200,
-                child: StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection("Posts")
-                        .orderBy('timeStamp', descending: true)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      }
+            const SizedBox(height: 20,),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     Text(
+            //       'Latest Feed',
+            //       style: kPoppinsBold.copyWith(
+            //         fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(
+            //   height: 20,
+            // ),
+            // SizedBox(
+            //     height: 200,
+            //     child: StreamBuilder(
+            //         stream: FirebaseFirestore.instance
+            //             .collection("Posts")
+            //             .orderBy('timeStamp', descending: true)
+            //             .snapshots(),
+            //         builder: (context, snapshot) {
+            //           if (snapshot.connectionState == ConnectionState.waiting) {
+            //             return const CircularProgressIndicator();
+            //           }
 
-                      if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      }
+            //           if (snapshot.hasError) {
+            //             return Text('Error: ${snapshot.error}');
+            //           }
 
-                      List<Post> posts =
-                          snapshot.data!.docs.map((DocumentSnapshot document) {
-                        Map<String, dynamic> data =
-                            document.data() as Map<String, dynamic>;
-                        Timestamp currentTime = Timestamp.now();
-                        return Post(
-                            date: data['timeStamp'] ?? currentTime,
-                            postId: data['postId'],
-                            userId: data['userId'],
-                            username: data['username'],
-                            content: data['content'],
-                            likes: data['likes'],
-                            comments: data['comments']);
-                      }).toList();
+            //           List<Post> posts =
+            //               snapshot.data!.docs.map((DocumentSnapshot document) {
+            //             Map<String, dynamic> data =
+            //                 document.data() as Map<String, dynamic>;
+            //             Timestamp currentTime = Timestamp.now();
+            //             return Post(
+            //                 date: data['timeStamp'] ?? currentTime,
+            //                 postId: data['postId'],
+            //                 userId: data['userId'],
+            //                 username: data['username'],
+            //                 content: data['content'],
+            //                 likes: data['likes'],
+            //                 comments: data['comments']);
+            //           }).toList();
 
-                      return ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: posts.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            Post post = posts[index];
+            //           return ListView.builder(
+            //               shrinkWrap: true,
+            //               itemCount: posts.length,
+            //               scrollDirection: Axis.horizontal,
+            //               itemBuilder: (context, index) {
+            //                 Post post = posts[index];
 
-                            DateTime now = DateTime.now();
-                            final postDate = post.date.toDate();
-                            if (postDate.year == now.year &&
-                                postDate.month == now.month &&
-                                postDate.day == now.day) {
-                              date = 'Today';
-                            } else if (postDate.year == now.year &&
-                                postDate.month == now.month &&
-                                postDate.day == now.day - 1) {
-                              date = 'Yesterday';
-                            } else {
-                              DateFormat formatter = DateFormat('d LLL');
-                              date = formatter.format(
-                                  DateTime.fromMicrosecondsSinceEpoch(
-                                      post.date.microsecondsSinceEpoch));
-                            }
+            //                 DateTime now = DateTime.now();
+            //                 final postDate = post.date.toDate();
+            //                 if (postDate.year == now.year &&
+            //                     postDate.month == now.month &&
+            //                     postDate.day == now.day) {
+            //                   date = 'Today';
+            //                 } else if (postDate.year == now.year &&
+            //                     postDate.month == now.month &&
+            //                     postDate.day == now.day - 1) {
+            //                   date = 'Yesterday';
+            //                 } else {
+            //                   DateFormat formatter = DateFormat('d LLL');
+            //                   date = formatter.format(
+            //                       DateTime.fromMicrosecondsSinceEpoch(
+            //                           post.date.microsecondsSinceEpoch));
+            //                 }
 
-                            return FeedCard(
-                              date: date,
-                              username: post.username,
-                              content: post.content,
-                              userId: post.userId,
-                              postId: post.postId,
-                              likes: post.likes,
-                              comments: post.comments,
-                            );
-                          });
-                    })),
-            const SizedBox(
-              height: 20,
-            ),
+            //                 return FeedCard(
+            //                   date: date,
+            //                   username: post.username,
+            //                   content: post.content,
+            //                   userId: post.userId,
+            //                   postId: post.postId,
+            //                   likes: post.likes,
+            //                   comments: post.comments,
+            //                 );
+            //               });
+            //         })),
+            // const SizedBox(
+            //   height: 20,
+            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -458,12 +513,30 @@ class _HomePageState extends State<HomePage> {
                     fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
                   ),
                 ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => InformationListPage(
+                                  isAdmin: isAdmin,
+                                )));
+                  },
+                  child: Text(
+                    'View all',
+                    style: kPoppinsMedium.copyWith(
+                      color: kBlue,
+                      fontSize: SizeConfig.blockSizeHorizontal! * 3,
+                    ),
+                  ),
+                )
               ],
             ),
             const SizedBox(
               height: 10,
             ),
             SizedBox(
+              height: 304,
               child: StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('Informations')
@@ -503,9 +576,8 @@ class _HomePageState extends State<HomePage> {
                     }).toList();
                     return ListView.builder(
                       shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: informations.length,
-                      scrollDirection: Axis.vertical,
+                      scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         Information information = informations[index];
                         return GestureDetector(
@@ -526,7 +598,7 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             padding: const EdgeInsets.all(12),
                             margin: const EdgeInsets.only(
-                              bottom: 20
+                              right: 20,
                             ),
                             height: 304,
                             width: 255,

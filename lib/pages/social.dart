@@ -25,9 +25,7 @@ class _InformationPageState extends State<SocialPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
+    return Scaffold(
           appBar: AppBar(
             title: const Row(
               children: [
@@ -37,7 +35,7 @@ class _InformationPageState extends State<SocialPage> {
           ),
           backgroundColor: kLighterWhite,
           body: const SocialHomePage(),
-        ));
+        );
   }
 }
 
@@ -91,7 +89,6 @@ class _SocialHomePageState extends State<SocialHomePage> {
               page: ListRoomPage(),
               imagePath: 'assets/images/team-image.png',
             ),
-            
           ],
         ),
       ),
@@ -99,7 +96,7 @@ class _SocialHomePageState extends State<SocialHomePage> {
   }
 }
 
-class CommunityCard extends StatelessWidget {
+class CommunityCard extends StatefulWidget {
   final String title;
   final String text;
   final page;
@@ -111,6 +108,11 @@ class CommunityCard extends StatelessWidget {
       required this.page,
       required this.imagePath});
 
+  @override
+  State<CommunityCard> createState() => _CommunityCardState();
+}
+
+class _CommunityCardState extends State<CommunityCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -130,7 +132,7 @@ class CommunityCard extends StatelessWidget {
           ),
         ],
         image: DecorationImage(
-            image: AssetImage(imagePath),
+            image: AssetImage(widget.imagePath),
             alignment: Alignment.centerLeft,
             fit: BoxFit.fitHeight),
       ),
@@ -144,7 +146,7 @@ class CommunityCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  title,
+                  widget.title,
                   style: const TextStyle(
                     fontSize: 22,
                     color: Colors.white,
@@ -153,8 +155,10 @@ class CommunityCard extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => page)),
+                  onTap: () {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => widget.page));
+                  },
                   child: Container(
                     margin: const EdgeInsets.only(top: 10),
                     padding: const EdgeInsets.symmetric(
@@ -177,7 +181,7 @@ class CommunityCard extends StatelessWidget {
                       ],
                     ),
                     child: Text(
-                      text,
+                      widget.text,
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.black,

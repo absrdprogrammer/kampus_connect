@@ -9,14 +9,19 @@ import 'package:kampus_connect/widgets/idea_card.dart';
 import 'package:kampus_connect/widgets/room_user_profile.dart';
 import "dart:math";
 
-class RoomScreen extends StatelessWidget {
+class RoomScreen extends StatefulWidget {
   final Room room;
 
-  RoomScreen({
+  const RoomScreen({
     Key? key,
     required this.room,
   }) : super(key: key);
 
+  @override
+  State<RoomScreen> createState() => _RoomScreenState();
+}
+
+class _RoomScreenState extends State<RoomScreen> {
   List<Color?> colors = [
     Colors.green[400],
     Colors.amber[300],
@@ -25,7 +30,9 @@ class RoomScreen extends StatelessWidget {
   ];
 
   FirestoreDatabase database = FirestoreDatabase();
+
   final random = new Random();
+
   ScrollController scrollController = ScrollController();
 
   @override
@@ -67,7 +74,7 @@ class RoomScreen extends StatelessWidget {
                 children: [
                   Center(
                     child: Text(
-                      room.name,
+                      widget.room.name,
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold,
@@ -98,7 +105,7 @@ class RoomScreen extends StatelessWidget {
                 mainAxisSpacing: 20.0,
                 crossAxisCount: 4,
                 childAspectRatio: 0.7,
-                children: room.others
+                children: widget.room.others
                     .map(
                       (e) => RoomUserProfile(
                         imageUrl: e.imageUrl,
@@ -126,7 +133,7 @@ class RoomScreen extends StatelessWidget {
                     height: 20,
                   ),
                   StreamBuilder(
-                      stream: database.getIdeasStream(room.groupId),
+                      stream: database.getIdeasStream(widget.room.groupId),
                       builder: (context, snapshot) {
                         // show loading circle
                         if (snapshot.connectionState ==
@@ -194,7 +201,7 @@ class RoomScreen extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) {
                     return CreateIdeaDialog(
-                      roomId: room.groupId,
+                      roomId: widget.room.groupId,
                     );
                   },
                 );
@@ -237,7 +244,7 @@ class RoomScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => ChatGroupPage(
-                                  groupId: room.groupId,
+                                  groupId: widget.room.groupId,
                                 )));
                   },
                   child: Container(
