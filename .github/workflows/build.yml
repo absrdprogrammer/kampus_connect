@@ -39,7 +39,7 @@ jobs:
       uses: actions/create-release@v1
       with:
         tag_name: ${{ github.sha }}
-        release_name: Release ${{ github.sha }}
+        release_name: Release Beta
         body: "Release Notes for this version"
         draft: false
         prerelease: true
