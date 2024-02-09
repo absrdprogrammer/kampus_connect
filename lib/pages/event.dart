@@ -17,13 +17,13 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen> {
   FirestoreDatabase database = FirestoreDatabase();
   List<DateModel> dates = [
-    DateModel(weekDay: "Sun", date: "10"),
-    DateModel(weekDay: "Mon", date: "11"),
-    DateModel(weekDay: "Tue", date: "12"),
-    DateModel(weekDay: "Wed", date: "13"),
-    DateModel(weekDay: "Thu", date: "14"),
-    DateModel(weekDay: "Fri", date: "15"),
-    DateModel(weekDay: "Sat", date: "16")
+    DateModel(weekDay: "Sun", date: "4"),
+    DateModel(weekDay: "Mon", date: "5"),
+    DateModel(weekDay: "Tue", date: "6"),
+    DateModel(weekDay: "Wed", date: "7"),
+    DateModel(weekDay: "Thu", date: "8"),
+    DateModel(weekDay: "Fri", date: "9"),
+    DateModel(weekDay: "Sat", date: "10")
   ];
 
   List<EventTypeModel> eventsType = [
@@ -37,10 +37,18 @@ class _EventScreenState extends State<EventScreen> {
 
   List<EventsModel> events = [
     EventsModel(
-        address: "Greenfields, Sector 42, Faridabad",
+        address: "Jakarta",
         imgeAssetPath: "assets/images/sports.png",
-        desc: "Sports Meet in Galaxy Field",
-        date: "Jan 12, 2019")
+        desc: "Sobi Fest 2024 UBSI",
+        date: "Feb 12, 2024")
+  ];
+
+  List<EventsModel> upcomingEvents = [
+    EventsModel(
+        address: "Depok",
+        imgeAssetPath: "assets/images/sports.png",
+        desc: "AI Summit 2024 Gunadarma",
+        date: "Feb 28, 2024")
   ];
 
   String todayDateIs = "12";
@@ -137,7 +145,7 @@ class _EventScreenState extends State<EventScreen> {
                           return DateTile(
                             weekDay: dates[index].weekDay,
                             date: dates[index].date,
-                            isSelected: todayDateIs == dates[index].date,
+                            isSelected: todayDateIs == dates[5].date,
                           );
                         }),
                   ),
