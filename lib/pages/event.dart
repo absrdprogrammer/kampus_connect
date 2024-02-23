@@ -16,15 +16,6 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen> {
   FirestoreDatabase database = FirestoreDatabase();
-  List<DateModel> dates = [
-    DateModel(weekDay: "Sun", date: "4"),
-    DateModel(weekDay: "Mon", date: "5"),
-    DateModel(weekDay: "Tue", date: "6"),
-    DateModel(weekDay: "Wed", date: "7"),
-    DateModel(weekDay: "Thu", date: "8"),
-    DateModel(weekDay: "Fri", date: "9"),
-    DateModel(weekDay: "Sat", date: "10")
-  ];
 
   List<EventTypeModel> eventsType = [
     EventTypeModel(

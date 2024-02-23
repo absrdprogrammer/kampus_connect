@@ -232,13 +232,13 @@ class _PostPageState extends State<PostPage> {
                           Expanded(
                               child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue.shade800,
+                                backgroundColor: Colors.blue,
                                 foregroundColor: Colors.white,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)),
-                                side: BorderSide(
-                                  color: Colors.blue.shade800,
+                                side: const BorderSide(
+                                  color: Colors.blue,
                                 ),
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 14)),

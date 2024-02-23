@@ -5,25 +5,24 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:kampus_connect/helper/helper_function.dart';
 import 'package:kampus_connect/pages/login.dart';
-import 'package:kampus_connect/pages/register_company.dart';
 import 'package:kampus_connect/widgets/my_textfield.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class RegisterCompanyPage extends StatefulWidget {
+  const RegisterCompanyPage({super.key});
 
   @override
-  RegisterPageState createState() => RegisterPageState();
+  RegisterCompanyPageState createState() => RegisterCompanyPageState();
 }
 
-class RegisterPageState extends State<RegisterPage> {
+class RegisterCompanyPageState extends State<RegisterCompanyPage> {
   final TextEditingController usernameController = TextEditingController();
-  final TextEditingController universityController = TextEditingController();
+  final TextEditingController companyController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmController = TextEditingController();
 
   String username = '';
-  String university = '';
+  String company = '';
   String emailText = '';
   String passwordText = '';
   String confirmPassword = '';
@@ -77,10 +76,9 @@ class RegisterPageState extends State<RegisterPage> {
           .collection("Users")
           .doc(userCredential.user!.email)
           .set({
-        'role': 'user',
+        'role': 'company',
         'email': userCredential.user!.email,
-        'username': username,
-        'university': university,
+        'company': company,
         'profileImg':
             'https://cdn3d.iconscout.com/3d/premium/thumb/man-avatar-6299539-5187871.png'
       });
@@ -96,6 +94,9 @@ class RegisterPageState extends State<RegisterPage> {
           child: LayoutBuilder(builder: (context, constraints) {
             return Column(
               children: [
+                const SizedBox(
+                  height: 20,
+                ),
                 Container(
                   height: constraints.maxWidth > 350 ? 350 : 200,
                   child: Stack(children: [
@@ -112,29 +113,14 @@ class RegisterPageState extends State<RegisterPage> {
                   ]),
                 ), // Nama TextField
                 MyTextField(
-                  prefixIcon: Icons.person_2_outlined,
-                  hintText: "Input name",
-                  labelText: "Username",
-                  controller: usernameController,
-                  obscureText: false,
-                  onTextChanged: (value) {
-                    setState(() {
-                      username = value;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 7,
-                ),
-                MyTextField(
                   prefixIcon: CupertinoIcons.building_2_fill,
-                  hintText: "Input university",
-                  labelText: "University",
-                  controller: universityController,
+                  hintText: "Input company",
+                  labelText: "Company",
+                  controller: companyController,
                   obscureText: false,
                   onTextChanged: (value) {
                     setState(() {
-                      university = value;
+                      company = value;
                     });
                   },
                 ),
@@ -186,28 +172,9 @@ class RegisterPageState extends State<RegisterPage> {
                     });
                   },
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const RegisterCompanyPage()));
-                      },
-                      child: const Text(
-                        'Looking for bussiness account?',
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w400),
-                      ),
-                    )
-                  ],
+                const SizedBox(
+                  height: 30,
                 ),
-                const SizedBox(height: 10,),
                 MaterialButton(
                   minWidth: double.infinity,
                   onPressed: registerUser,

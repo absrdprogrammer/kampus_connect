@@ -34,11 +34,14 @@ class _RolePageState extends State<RolePage> {
               RolesTile(
                   title: "Student",
                   imagePath: 'assets/images/student-image.png'),
-              RolesTile(
-                  title: "Lecturer",
-                  imagePath: 'assets/images/teacher-image.png'),
-              RolesTile(
-                  title: "Admin", imagePath: 'assets/images/admin-image.png')
+                  RolesTile(
+                  title: "Company",
+                  imagePath: 'assets/images/company-image.png'),
+              // RolesTile(
+              //     title: "Lecturer",
+              //     imagePath: 'assets/images/teacher-image.png'),
+              // RolesTile(
+              //     title: "Admin", imagePath: 'assets/images/admin-image.png')
             ],
           ))
         ]),

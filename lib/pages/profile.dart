@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kampus_connect/database/firestore.dart';
+import 'package:kampus_connect/pages/edit_profile.dart';
 import 'package:kampus_connect/pages/login.dart';
 import 'package:kampus_connect/widgets/profile_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -181,49 +182,52 @@ class BottomSheet extends StatelessWidget {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Container(
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(20)),
-                                boxShadow: [
-                                  BoxShadow(
-                                      blurRadius: 16.0,
-                                      color: Colors.black.withOpacity(0.04),
-                                      spreadRadius: 16.0,
-                                      offset: const Offset(0, 2))
-                                ],
-                                color: Colors.white),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 16.0),
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                      width: 32,
-                                      height: 32,
-                                      decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(8)),
+                        GestureDetector(
+                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfilePage())),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      const BorderRadius.all(Radius.circular(20)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        blurRadius: 16.0,
+                                        color: Colors.black.withOpacity(0.04),
+                                        spreadRadius: 16.0,
+                                        offset: const Offset(0, 2))
+                                  ],
+                                  color: Colors.white),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 16.0),
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8)),
+                                            color:
+                                                Color.fromARGB(48, 35, 148, 253)),
+                                        child: const Icon(
+                                          LineAwesomeIcons.pen,
                                           color:
-                                              Color.fromARGB(48, 35, 148, 253)),
-                                      child: const Icon(
-                                        LineAwesomeIcons.pen,
-                                        color:
-                                            Color.fromARGB(255, 35, 148, 253),
-                                      )),
-                                  const SizedBox(width: 12),
-                                  const Expanded(
-                                      child: Text("Edit Profile",
-                                          style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 25, 25, 34),
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.bold))),
-                                  const Icon(
-                                    LineAwesomeIcons.angle_right,
-                                    color: Color.fromARGB(255, 35, 148, 253),
-                                  )
-                                ])),
+                                              Color.fromARGB(255, 35, 148, 253),
+                                        )),
+                                    const SizedBox(width: 12),
+                                    const Expanded(
+                                        child: Text("Edit Profile",
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 25, 25, 34),
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold))),
+                                    const Icon(
+                                      LineAwesomeIcons.angle_right,
+                                      color: Color.fromARGB(255, 35, 148, 253),
+                                    )
+                                  ])),
+                        ),
                         const SizedBox(height: 18.0),
                         Container(
                             decoration: BoxDecoration(
