@@ -4,6 +4,7 @@ import 'package:kampus_connect/auth/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kampus_connect/pages/event.dart';
 import 'package:kampus_connect/pages/feed_page.dart';
+import 'package:kampus_connect/pages/forgot_password.dart';
 import 'package:kampus_connect/pages/home.dart';
 import 'package:kampus_connect/pages/login.dart';
 import 'package:kampus_connect/pages/onboarding.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(fontFamily: GoogleFonts.montserrat(fontWeight: FontWeight.w500).fontFamily),
       title: 'Kampus Connect',
       debugShowCheckedModeBanner: false,
-      home:AuthPage(),
+      home:LoginPage(),
       initialRoute: '/',
         routes: {
           '/home': (context) => const HomeScreen(),

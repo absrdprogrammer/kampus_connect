@@ -117,7 +117,7 @@ class _PostPageState extends State<PostPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Post Informations",
+          "Post Article",
           style: TextStyle(fontSize: 22),
         ),
       ),

@@ -12,7 +12,6 @@ import 'package:kampus_connect/constants/size_config.dart';
 import 'package:kampus_connect/database/firestore.dart';
 import 'package:kampus_connect/models/information.dart';
 import 'package:kampus_connect/models/news.dart';
-import 'package:kampus_connect/models/notification.dart';
 import 'package:kampus_connect/models/post.dart';
 import 'package:kampus_connect/pages/chat_detail_page.dart';
 import 'package:kampus_connect/pages/event.dart';
@@ -62,6 +61,13 @@ class _InformationPageState extends State<InformationPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        floatingActionButton: _currentPageIndex == 0// Memastikan bahwa floating button hanya muncul di halaman selain halaman profil (indeks 3)
+        ? FloatingActionButton(
+            child: const Icon(Icons.add),
+            onPressed: () => Navigator.push(
+                context, MaterialPageRoute(builder: (context) => PostPage())),
+          )
+        : null,
         backgroundColor: kLighterWhite,
         bottomNavigationBar: NavigationBarTheme(
           data: NavigationBarThemeData(
