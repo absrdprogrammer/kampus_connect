@@ -64,7 +64,7 @@ class _AddNewpostState extends State<AddAnnouncement> {
             const SizedBox(
               width: double.infinity,
               child: Text(
-                "New Announcement",
+                "Add Article",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25,

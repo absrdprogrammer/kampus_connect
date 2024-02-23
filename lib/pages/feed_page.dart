@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kampus_connect/constants/app_styles.dart';
+import 'package:kampus_connect/constants/size_config.dart';
 import 'package:kampus_connect/database/firestore.dart';
 import 'package:kampus_connect/models/post.dart';
 import 'package:kampus_connect/pages/view_post.dart';
 import 'package:kampus_connect/widgets/edit_post.dart';
+import 'package:kampus_connect/widgets/show_model.dart';
 
 class FeedPage extends StatelessWidget {
   FeedPage({super.key});
@@ -15,7 +19,45 @@ class FeedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Feeds")),
+      appBar: AppBar(
+        title: const Text("Feeds"),
+        actions: [
+          Row(
+            children: <Widget>[
+              GestureDetector(
+                onTap: () => showModalBottomSheet(
+                  isScrollControlled: true,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  context: context,
+                  builder: (context) => AddNewPost(),
+                ),
+                child: const Row(
+                    children: <Widget>[
+                      Icon(
+                        CupertinoIcons.plus_circle,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        "Open Topic",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ],
+                ),
+              )
+            ],
+          ),
+          const SizedBox(width: 15,)
+        ],
+      ),
       body: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection("Posts")
@@ -73,9 +115,11 @@ class FeedPage extends StatelessWidget {
                   }
 
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
                       width: 350,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -92,7 +136,8 @@ class FeedPage extends StatelessWidget {
                       child: Column(
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
                             child: Column(
                               children: <Widget>[
                                 ListTile(

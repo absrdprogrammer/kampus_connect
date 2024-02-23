@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kampus_connect/helper/helper_function.dart';
 import 'package:kampus_connect/pages/chat_detail_page.dart';
+import 'package:kampus_connect/pages/forgot_password.dart';
 import 'package:kampus_connect/pages/home.dart';
 import 'package:kampus_connect/pages/home_screen.dart';
 import 'package:kampus_connect/pages/register.dart';
@@ -24,7 +25,7 @@ class LoginPageState extends State<LoginPage> {
   void login() async {
     // show loading circle
     showDialog(
-      barrierDismissible: false,
+        barrierDismissible: false,
         context: context,
         builder: (context) => const Center(
               child: CircularProgressIndicator(),
@@ -118,7 +119,12 @@ class LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ForgotPasswordPage()));
+                  },
                   child: const Text(
                     'Forgot Password?',
                     style: TextStyle(
