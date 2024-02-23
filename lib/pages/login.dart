@@ -47,8 +47,6 @@ class LoginPageState extends State<LoginPage> {
             builder: (context) => const InformationPage(),
           ),
         );
-
-        setState(() {});
       }
     } on FirebaseAuthException catch (e) {
       // pop loading circle
