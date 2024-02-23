@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kampus_connect/data/data.dart';
+import 'package:kampus_connect/database/firestore.dart';
 
 import 'package:kampus_connect/models/date_model.dart';
 import 'package:kampus_connect/models/event_type_model.dart';
@@ -14,14 +15,15 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
+  FirestoreDatabase database = FirestoreDatabase();
   List<DateModel> dates = [
-    DateModel(weekDay: "Sun", date: "10"),
-    DateModel(weekDay: "Mon", date: "11"),
-    DateModel(weekDay: "Tue", date: "12"),
-    DateModel(weekDay: "Wed", date: "13"),
-    DateModel(weekDay: "Thu", date: "14"),
-    DateModel(weekDay: "Fri", date: "15"),
-    DateModel(weekDay: "Sat", date: "16")
+    DateModel(weekDay: "Sun", date: "4"),
+    DateModel(weekDay: "Mon", date: "5"),
+    DateModel(weekDay: "Tue", date: "6"),
+    DateModel(weekDay: "Wed", date: "7"),
+    DateModel(weekDay: "Thu", date: "8"),
+    DateModel(weekDay: "Fri", date: "9"),
+    DateModel(weekDay: "Sat", date: "10")
   ];
 
   List<EventTypeModel> eventsType = [
@@ -35,10 +37,18 @@ class _EventScreenState extends State<EventScreen> {
 
   List<EventsModel> events = [
     EventsModel(
-        address: "Greenfields, Sector 42, Faridabad",
+        address: "Jakarta",
         imgeAssetPath: "assets/images/sports.png",
-        desc: "Sports Meet in Galaxy Field",
-        date: "Jan 12, 2019")
+        desc: "Sobi Fest 2024 UBSI",
+        date: "Feb 12, 2024")
+  ];
+
+  List<EventsModel> upcomingEvents = [
+    EventsModel(
+        address: "Depok",
+        imgeAssetPath: "assets/images/sports.png",
+        desc: "AI Summit 2024 Gunadarma",
+        date: "Feb 28, 2024")
   ];
 
   String todayDateIs = "12";
@@ -49,6 +59,27 @@ class _EventScreenState extends State<EventScreen> {
     // dates = getDates();
     // eventsType = getEventTypes();
     // events = getEvents();
+  }
+
+  String _getWeekDay(int weekDay) {
+    switch (weekDay) {
+      case 1:
+        return 'Sun';
+      case 2:
+        return 'Mon';
+      case 3:
+        return 'Tue';
+      case 4:
+        return 'Wed';
+      case 5:
+        return 'Thu';
+      case 6:
+        return 'Fri';
+      case 7:
+        return 'Sat';
+      default:
+        return '';
+    }
   }
 
   @override
@@ -73,29 +104,16 @@ class _EventScreenState extends State<EventScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      const Spacer(),
-                      Image.asset(
-                        "assets/images/notify.png",
-                        height: 22,
-                        color: Colors.blue,
-                      ),
-                      const SizedBox(
-                        width: 16,
-                      ),
-                    ],
-                  ),
                   const SizedBox(
                     height: 10,
                   ),
-                  const Row(
+                  Row(
                     children: <Widget>[
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "Hello, Sanskar!",
+                            "Hello, ${database.user!.displayName}",
                             style: TextStyle(
                                 color: Colors.blue,
                                 fontWeight: FontWeight.w700,
@@ -127,7 +145,7 @@ class _EventScreenState extends State<EventScreen> {
                           return DateTile(
                             weekDay: dates[index].weekDay,
                             date: dates[index].date,
-                            isSelected: todayDateIs == dates[index].date,
+                            isSelected: todayDateIs == dates[5].date,
                           );
                         }),
                   ),
@@ -186,6 +204,7 @@ class DateTile extends StatelessWidget {
   String weekDay;
   String date;
   bool isSelected;
+
   DateTile(
       {super.key,
       required this.weekDay,

@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kampus_connect/database/firestore.dart';
+import 'package:kampus_connect/pages/login.dart';
 import 'package:kampus_connect/widgets/profile_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
@@ -13,6 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late ScrollController _scrollController;
   bool lastStatus = true;
   double height = 160;
+
   @override
   void initState() {
     super.initState();
@@ -79,12 +83,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           )
                         ],
-                    body: const BottomSheet()))));
+                    body: BottomSheet()))));
   }
 }
 
 class BottomSheet extends StatelessWidget {
-  const BottomSheet({super.key});
+  BottomSheet({super.key});
+
+  FirestoreDatabase database = FirestoreDatabase();
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +115,7 @@ class BottomSheet extends StatelessWidget {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  const Text("User",
+                  Text(database.user!.displayName.toString(),
                       style: TextStyle(
                           color: Color.fromARGB(255, 25, 25, 34),
                           fontSize: 32,
@@ -257,9 +263,19 @@ class BottomSheet extends StatelessWidget {
                                                   255, 25, 25, 34),
                                               fontSize: 18.0,
                                               fontWeight: FontWeight.bold))),
-                                  const Icon(
-                                    LineAwesomeIcons.angle_right,
-                                    color: Color.fromARGB(255, 35, 148, 253),
+                                  GestureDetector(
+                                    onTap: () {
+                                      FirebaseAuth.instance.signOut();
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const LoginPage()));
+                                    },
+                                    child: const Icon(
+                                      LineAwesomeIcons.angle_right,
+                                      color: Color.fromARGB(255, 35, 148, 253),
+                                    ),
                                   )
                                 ]))
                       ])

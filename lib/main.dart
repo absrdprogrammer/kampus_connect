@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kampus_connect/auth/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:kampus_connect/pages/article_slide.dart';
 import 'package:kampus_connect/pages/event.dart';
 import 'package:kampus_connect/pages/feed_page.dart';
 import 'package:kampus_connect/pages/home.dart';
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(fontFamily: GoogleFonts.montserrat(fontWeight: FontWeight.w500).fontFamily),
       title: 'Kampus Connect',
       debugShowCheckedModeBanner: false,
-      home: AuthPage(),
+      home:AuthPage(),
       initialRoute: '/',
         routes: {
           '/home': (context) => const HomeScreen(),

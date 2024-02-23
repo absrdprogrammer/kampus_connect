@@ -22,7 +22,7 @@ class _InformationListPageState extends State<InformationListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('All Information'),
+        title: const Text('All Articles'),
       ),
       body: StreamBuilder(
           stream: FirebaseFirestore.instance

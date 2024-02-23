@@ -101,17 +101,37 @@ class NewsDetailScreen extends StatelessWidget {
                 ),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Posted at ' + date,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: kPoppinsRegular.copyWith(
-                      color: kGrey,
-                      fontSize: SizeConfig.blockSizeHorizontal! * 3,
-                    ),
-                  )
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 13,
+                        backgroundColor: kBlue,
+                        backgroundImage: NetworkImage(
+                          'https://ps.w.org/avatar-3d-creator/assets/icon-256x256.png?rev=2648611',
+                        ),
+                      ),
+                      SizedBox(width: 10,),
+                      Text("Name")
+                    ],
+                  ),
+                  const SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        date,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: kPoppinsRegular.copyWith(
+                          color: kGrey,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 3,
+                        ),
+                      )
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -133,88 +153,6 @@ class NewsDetailScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-final List<String> imageList = [
-  'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1365&q=80',
-  'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80',
-  'https://images.unsplash.com/photo-1540202404-a2f29016b523?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3266&q=80'
-];
-
-class FullScreenSlider extends StatefulWidget {
-  const FullScreenSlider({Key? key}) : super(key: key);
-
-  @override
-  State<FullScreenSlider> createState() => _FullScreenSliderState();
-}
-
-class _FullScreenSliderState extends State<FullScreenSlider> {
-  int _current = 1;
-  final CarouselController _controller = CarouselController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        CarouselSlider(
-          carouselController: _controller,
-          options: CarouselOptions(
-            height: SizeConfig.blockSizeVertical! * 50,
-            viewportFraction: 1.0,
-            enlargeCenterPage: false,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _current = index;
-              });
-            },
-            initialPage: _current,
-          ),
-          items: imageList
-              .map(
-                (item) => Center(
-                  child: Image.network(
-                    item,
-                    fit: BoxFit.cover,
-                    height: SizeConfig.blockSizeVertical! * 50,
-                    width: double.infinity,
-                  ),
-                ),
-              )
-              .toList(),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              bottom: 52,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: imageList
-                  .asMap()
-                  .entries
-                  .map(
-                    (entry) => GestureDetector(
-                      onTap: () => _controller.animateToPage(entry.key),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                        ),
-                        child: SvgPicture.asset(
-                          _current == entry.key
-                              ? 'assets/images/carousel_indicator_enabled.svg'
-                              : 'assets/images/carousel_indicator_disabled.svg',
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
