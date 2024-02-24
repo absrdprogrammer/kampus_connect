@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kampus_connect/database/firestore.dart';
@@ -12,11 +13,15 @@ class AddEvent extends StatefulWidget {
 
 class _AddNewpostState extends State<AddEvent> {
   final TextEditingController newPostController = TextEditingController();
+  DateTime? pickedDate;
+  TimeOfDay? pickedTime;
+  DateTime? _selectedDateTime;
 
   FirestoreDatabase database = FirestoreDatabase();
 
   String title = '';
-  String post = '';
+  String desc = '';
+  String address = '';
   String dateText = 'dd/mm/yy';
   String timeText = 'hh : mm';
   int selectedCategory = 0;
@@ -29,37 +34,37 @@ class _AddNewpostState extends State<AddEvent> {
   ];
 
   Future<void> selectedDate() async {
-    DateTime? pickedDate = await showDatePicker(
+    pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
 
-    if (pickedDate != null && pickedDate.isAfter(DateTime.now())) {
+    if (pickedDate != null && pickedDate!.isAfter(DateTime.now())) {
       setState(() {
-        dateText = "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-        print(dateText);
+        dateText =
+            "${pickedDate!.day}/${pickedDate!.month}/${pickedDate!.year}";
       });
     }
   }
 
   Future<void> selectedTime() async {
-    TimeOfDay? pickedTime = await showTimePicker(
+    pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(DateTime.now()),
     );
 
     if (pickedTime != null) {
-      String amPm = pickedTime.hour < 12 ? 'AM' : 'PM';
+      String amPm = pickedTime!.hour < 12 ? 'AM' : 'PM';
       setState(() {
-        timeText = "${pickedTime.hour} : ${pickedTime.minute} $amPm";
+        timeText = "${pickedTime!.hour} : ${pickedTime!.minute} $amPm";
       });
     }
   }
 
-  void AddEvent() {
-    if (post.trim() == '' || title.trim() == '') {
+  void postEvent() {
+    if (desc.trim() == '' || title.trim() == '') {
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -80,9 +85,12 @@ class _AddNewpostState extends State<AddEvent> {
             );
           });
     } else {
-      database.addAnnouncement(post, title);
-      post = '';
+      String amPm = pickedTime!.hour < 12 ? 'AM' : 'PM';
+      String dateTimeEvent = "${pickedDate!.day} ${pickedDate!.month}, ${pickedDate!.year}  ${pickedTime!.hour} : ${pickedTime!.minute} $amPm";
+      database.addEvent(title, address, desc, dateTimeEvent);
+      desc = '';
       title = '';
+      address = '';
       setState(() {});
       Navigator.of(context).pop();
     }
@@ -149,15 +157,37 @@ class _AddNewpostState extends State<AddEvent> {
               ),
               child: Container(
                 child: TextField(
-                  maxLines: null,
-                  minLines: 7,
+                  autofocus: true,
+                  maxLines: 1,
                   onChanged: (value) {
-                    post = value;
+                    address = value;
                   },
                   decoration: const InputDecoration(
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
-                    hintText: "Type something...",
+                    hintText: "Address",
+                  ),
+                ),
+              ),
+            ),
+            const Gap(12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Container(
+                child: TextField(
+                  maxLines: null,
+                  minLines: 7,
+                  onChanged: (value) {
+                    desc = value;
+                  },
+                  decoration: const InputDecoration(
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    hintText: "Add Description",
                   ),
                 ),
               ),
@@ -203,7 +233,6 @@ class _AddNewpostState extends State<AddEvent> {
                 ),
               ],
             ),
-
             const Gap(20),
             Row(
               children: [
@@ -242,7 +271,7 @@ class _AddNewpostState extends State<AddEvent> {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    onPressed: AddEvent,
+                    onPressed: postEvent,
                     child: const Text('Add'),
                   ),
                 ),

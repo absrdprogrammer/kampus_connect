@@ -170,6 +170,22 @@ class FirestoreDatabase {
     });
   }
 
+  Future<void> addEvent(String title, String address, String description, String date) async {
+    final CollectionReference eventsCollection =
+        FirebaseFirestore.instance.collection('Events');
+
+    final DocumentReference newEventRef = eventsCollection.doc();
+
+    await newEventRef.set({
+      'postId': newEventRef.id,
+      'title': title,
+      'address': address,
+      'desc': description,
+      'date': date,
+      'timeStamp': FieldValue.serverTimestamp(),
+    });
+  }
+
   Future<void> addAnnouncement(String content, String title) async {
     final CollectionReference postsCollection =
         FirebaseFirestore.instance.collection('Announcements');
@@ -248,22 +264,6 @@ class FirestoreDatabase {
       await postRef.update({'likes': FieldValue.increment(1)});
     }
   }
-
-  // Future<void> unlikePost(String postId, String userId) async {
-  //   final DocumentReference postRef =
-  //       FirebaseFirestore.instance.collection('Posts').doc(postId);
-
-  //   final CollectionReference likesCollection = postRef.collection('Likes');
-
-  //   final DocumentSnapshot likeSnapshot =
-  //       await likesCollection.doc(userId).get();
-
-  //   if (likeSnapshot.exists) {
-  //     await likesCollection.doc(userId).delete();
-
-  //     await postRef.update({'Likes': FieldValue.increment(-1)});
-  //   }
-  // }
 
   Future<void> addComment(String postId, String commentText) async {
     final CollectionReference commentsCollection = FirebaseFirestore.instance
