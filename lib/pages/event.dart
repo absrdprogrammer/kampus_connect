@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kampus_connect/data/data.dart';
 import 'package:kampus_connect/database/firestore.dart';
 
 import 'package:kampus_connect/models/date_model.dart';
@@ -16,6 +16,8 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen> {
   FirestoreDatabase database = FirestoreDatabase();
+  List<DateModel> dates = [];
+  String todayDateIs = '';
 
   List<EventTypeModel> eventsType = [
     EventTypeModel(
@@ -26,30 +28,33 @@ class _EventScreenState extends State<EventScreen> {
         imgAssetPath: "assets/images/sports.png", eventType: "Festival"),
   ];
 
-  List<EventsModel> events = [
-    EventsModel(
-        address: "Jakarta",
-        imgeAssetPath: "assets/images/sports.png",
-        desc: "Sobi Fest 2024 UBSI",
-        date: "Feb 12, 2024")
-  ];
-
-  List<EventsModel> upcomingEvents = [
-    EventsModel(
-        address: "Depok",
-        imgeAssetPath: "assets/images/sports.png",
-        desc: "AI Summit 2024 Gunadarma",
-        date: "Feb 28, 2024")
-  ];
-
-  String todayDateIs = "12";
-
   @override
   void initState() {
     super.initState();
-    // dates = getDates();
-    // eventsType = getEventTypes();
-    // events = getEvents();
+    dates = generateWeeklyDates();
+    todayDateIs = getDateNow();
+  }
+
+  List<DateModel> generateWeeklyDates() {
+    List<DateModel> dates = [];
+    DateTime today = DateTime.now();
+    DateTime firstDayOfThisWeek =
+        today.subtract(Duration(days: today.weekday - 1));
+
+    for (int i = 0; i < 7; i++) {
+      DateTime date = firstDayOfThisWeek.add(Duration(days: i));
+      String weekDay = _getWeekDay(date.weekday);
+      dates.add(DateModel(weekDay: weekDay, date: date.day.toString()));
+    }
+
+    return dates;
+  }
+
+  String getDateNow() {
+    DateTime today = DateTime.now();
+    String dayNow = today.day.toString();
+
+    return dayNow;
   }
 
   String _getWeekDay(int weekDay) {
@@ -104,7 +109,7 @@ class _EventScreenState extends State<EventScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "Hello, ${database.user!.displayName}",
+                            "Hello! ${database.user!.displayName}",
                             style: TextStyle(
                                 color: Colors.blue,
                                 fontWeight: FontWeight.w700,
@@ -136,7 +141,7 @@ class _EventScreenState extends State<EventScreen> {
                           return DateTile(
                             weekDay: dates[index].weekDay,
                             date: dates[index].date,
-                            isSelected: todayDateIs == dates[5].date,
+                            isSelected: todayDateIs == dates[index].date,
                           );
                         }),
                   ),
@@ -148,39 +153,69 @@ class _EventScreenState extends State<EventScreen> {
                     "Ongoing Events",
                     style: TextStyle(color: Colors.black, fontSize: 20),
                   ),
-                  ListView.builder(
-                      padding: EdgeInsets.only(top: 10),
-                      itemCount: events.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return PopularEventTile(
-                          desc: events[index].desc,
-                          imgeAssetPath: events[index].imgeAssetPath,
-                          date: events[index].date,
-                          address: events[index].address,
-                        );
-                      }),
+                  StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                          .collection('Events')
+                          .orderBy("timeStamp", descending: true)
+                          .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+
+                        List<EventsModel> events = snapshot.data!.docs
+                            .map((DocumentSnapshot document) {
+                          Map<String, dynamic> data =
+                              document.data() as Map<String, dynamic>;
+                          return EventsModel(
+                            eventId: data['postId'],
+                            date: data['date'],
+                            address: data['address'],
+                            title: data['title'],
+                            desc: data['desc'],
+                            imgeAssetPath: "assets/images/calendar.png"
+                          );
+                        }).toList();
+                      return ListView.builder(
+                          padding: EdgeInsets.only(top: 10),
+                          itemCount: events.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return PopularEventTile(
+                              desc: events[index].title,
+                              imgeAssetPath: events[index].imgeAssetPath,
+                              date: events[index].date,
+                              address: events[index].address,
+                            );
+                          });
+                    }
+                  ),
 
                   /// Popular Events
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  const Text(
-                    "Upcoming Events",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                  ListView.builder(
-                      padding: EdgeInsets.only(top: 10),
-                      itemCount: events.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return PopularEventTile(
-                          desc: events[index].desc,
-                          imgeAssetPath: events[index].imgeAssetPath,
-                          date: events[index].date,
-                          address: events[index].address,
-                        );
-                      })
+                  // const SizedBox(
+                  //   height: 16,
+                  // ),
+                  // const Text(
+                  //   "Upcoming Events",
+                  //   style: TextStyle(color: Colors.black, fontSize: 20),
+                  // ),
+                  // ListView.builder(
+                  //     padding: EdgeInsets.only(top: 10),
+                  //     itemCount: events.length,
+                  //     shrinkWrap: true,
+                  //     itemBuilder: (context, index) {
+                  //       return PopularEventTile(
+                  //         desc: events[index].desc,
+                  //         imgeAssetPath: events[index].imgeAssetPath,
+                  //         date: events[index].date,
+                  //         address: events[index].address,
+                  //       );
+                  //     })
                 ],
               ),
             ),
@@ -310,15 +345,15 @@ class PopularEventTile extends StatelessWidget {
                     children: <Widget>[
                       Image.asset(
                         "assets/images/calender.png",
-                        height: 12,
+                        height: 15,
                       ),
                       const SizedBox(
-                        width: 8,
+                        width: 10,
                       ),
                       Text(
                         date,
                         style:
-                            const TextStyle(color: Colors.white, fontSize: 10),
+                            const TextStyle(color: Colors.white, fontSize: 12),
                       )
                     ],
                   ),
@@ -329,7 +364,7 @@ class PopularEventTile extends StatelessWidget {
                     children: <Widget>[
                       Image.asset(
                         "assets/images/location.png",
-                        height: 12,
+                        height: 15,
                       ),
                       const SizedBox(
                         width: 8,
@@ -337,7 +372,7 @@ class PopularEventTile extends StatelessWidget {
                       Text(
                         address,
                         style:
-                            const TextStyle(color: Colors.white, fontSize: 10),
+                            const TextStyle(color: Colors.white, fontSize: 12),
                       )
                     ],
                   ),

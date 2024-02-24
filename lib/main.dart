@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(fontFamily: GoogleFonts.montserrat(fontWeight: FontWeight.w500).fontFamily),
       title: 'Kampus Connect',
       debugShowCheckedModeBanner: false,
-      home:const RegisterPage(),
+      home:const AuthPage(),
       initialRoute: '/',
         routes: {
           '/home': (context) => const HomeScreen(),
