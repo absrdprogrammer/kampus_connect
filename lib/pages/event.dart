@@ -150,7 +150,7 @@ class _EventScreenState extends State<EventScreen> {
                     height: 25,
                   ),
                   const Text(
-                    "Ongoing Events",
+                    "Upcoming Events",
                     style: TextStyle(color: Colors.black, fontSize: 20),
                   ),
                   StreamBuilder(

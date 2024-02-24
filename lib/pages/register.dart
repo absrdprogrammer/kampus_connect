@@ -29,9 +29,6 @@ class RegisterPageState extends State<RegisterPage> {
   String confirmPassword = '';
 
   Future<void> registerUser() async {
-    // print(
-    //     "Username : $username, Email : $emailText, Password: $passwordText, Confirm Password: $confirmPassword");
-    // show loading circle
     showDialog(
         barrierDismissible: false,
         context: context,
