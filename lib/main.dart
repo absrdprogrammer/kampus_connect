@@ -11,8 +11,6 @@ import 'package:kampus_connect/pages/login.dart';
 import 'package:kampus_connect/pages/onboarding.dart';
 import 'package:kampus_connect/pages/profile.dart';
 import 'package:kampus_connect/pages/register.dart';
-import 'package:kampus_connect/pages/register_company.dart';
-import 'package:kampus_connect/pages/role.dart';
 import 'package:kampus_connect/pages/room_list.dart';
 import 'package:kampus_connect/pages/room_screen.dart';
 import 'firebase_options.dart';

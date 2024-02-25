@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kampus_connect/database/firestore.dart';
@@ -14,6 +15,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  FirestoreDatabase database = FirestoreDatabase();
   late ScrollController _scrollController;
   bool lastStatus = true;
   double height = 160;
@@ -88,10 +90,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-class BottomSheet extends StatelessWidget {
+class BottomSheet extends StatefulWidget {
   BottomSheet({super.key});
 
+  @override
+  State<BottomSheet> createState() => _BottomSheetState();
+}
+
+class _BottomSheetState extends State<BottomSheet> {
   FirestoreDatabase database = FirestoreDatabase();
+  String profileImg = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getProfileImg();
+  }
+
+  Stream<DocumentSnapshot> getProfileImg() {
+    return FirebaseFirestore.instance
+        .collection('Users')
+        .doc(database.user!.email)
+        .snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -183,11 +204,15 @@ class BottomSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfilePage())),
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const EditProfilePage())),
                           child: Container(
                               decoration: BoxDecoration(
-                                  borderRadius:
-                                      const BorderRadius.all(Radius.circular(20)),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(20)),
                                   boxShadow: [
                                     BoxShadow(
                                         blurRadius: 16.0,
@@ -207,8 +232,8 @@ class BottomSheet extends StatelessWidget {
                                         decoration: const BoxDecoration(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(8)),
-                                            color:
-                                                Color.fromARGB(48, 35, 148, 253)),
+                                            color: Color.fromARGB(
+                                                48, 35, 148, 253)),
                                         child: const Icon(
                                           LineAwesomeIcons.pen,
                                           color:
@@ -285,11 +310,53 @@ class BottomSheet extends StatelessWidget {
                       ])
                 ]),
           ),
-          const Positioned(
-              top: -65,
-              width: 128,
-              height: 128,
-              child: Image(image: AssetImage('assets/images/hello-image.png'))),
+          StreamBuilder(
+              stream: getProfileImg(),
+              builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return Text(
+                      'Document does not exist'); // Menangani kasus dokumen tidak ada
+                } else {
+                  profileImg = snapshot.data!['profileImg'] ?? '';
+                  return Positioned(
+                    top: -65,
+                    width: 128,
+                    height: 128,
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: 130.0,
+                          height: 130.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black45,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ClipOval(
+                            child: Container(
+                              color: Colors
+                                  .white, // Menambahkan latar belakang putih di sekitar gambar
+                              child: Image(
+                                image: NetworkImage(profileImg),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+
+                }
+              }),
         ]);
   }
 }
