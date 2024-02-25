@@ -61,13 +61,14 @@ class _InformationPageState extends State<InformationPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        floatingActionButton: _currentPageIndex == 0// Memastikan bahwa floating button hanya muncul di halaman selain halaman profil (indeks 3)
-        ? FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () => Navigator.push(
-                context, MaterialPageRoute(builder: (context) => PostPage())),
-          )
-        : null,
+        floatingActionButton: _currentPageIndex ==
+                0 // Memastikan bahwa floating button hanya muncul di halaman selain halaman profil (indeks 3)
+            ? FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => PostPage())),
+              )
+            : null,
         backgroundColor: kLighterWhite,
         bottomNavigationBar: NavigationBarTheme(
           data: NavigationBarThemeData(
@@ -142,6 +143,24 @@ class _HomePageState extends State<HomePage> {
 
   String role = '';
   bool isAdmin = false;
+  String profileImg = '';
+
+  void loadUserData() async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(database.user!.email)
+          .get();
+
+      if (userSnapshot.exists) {
+        setState(() {
+          profileImg = userSnapshot['profileImg'] ?? '';
+        });
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+    }
+  }
 
   // Helper method to load the current post content
   Future<void> loadPost(postId) async {
@@ -176,6 +195,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    loadUserData();
+
     Timestamp timestamp = Timestamp.now();
     DateTime dateTime = timestamp.toDate();
     DateFormat dateFormatter = DateFormat('EEEE, d LLLL yyyy');
@@ -194,6 +215,13 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  Stream<DocumentSnapshot> getProfileImg() {
+    return FirebaseFirestore.instance
+        .collection('Users')
+        .doc(database.user!.email)
+        .snapshots();
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -209,18 +237,35 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Row(
                   children: [
-                    Container(
-                      height: 51,
-                      width: 51,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(kBorderRadius),
-                        color: kLightBlue,
-                        image: const DecorationImage(
-                          image: NetworkImage(
-                            'https://cdn3d.iconscout.com/3d/premium/thumb/man-avatar-6299539-5187871.png',
+                    StreamBuilder(
+                      stream: getProfileImg(),
+                      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else if (!snapshot.hasData ||
+                              !snapshot.data!.exists) {
+                            return Text(
+                                'Document does not exist'); // Menangani kasus dokumen tidak ada
+                          } else {
+                            return Container(
+                          height: 51,
+                          width: 51,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(kBorderRadius),
+                            color: kLightBlue,
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                profileImg,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                          }
+                      }
                     ),
                     const SizedBox(
                       width: 16,
@@ -424,7 +469,9 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             // Row(
             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
             //   crossAxisAlignment: CrossAxisAlignment.center,

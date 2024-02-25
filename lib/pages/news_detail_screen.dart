@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kampus_connect/constants/app_styles.dart';
 import 'package:kampus_connect/constants/size_config.dart';
@@ -10,8 +11,13 @@ class NewsDetailScreen extends StatelessWidget {
   final desc;
   final date;
   const NewsDetailScreen(
-      {Key? key, required this.imgUrl, required this.title, required this.desc, required this.date})
+      {Key? key,
+      required this.imgUrl,
+      required this.title,
+      required this.desc,
+      required this.date})
       : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +68,11 @@ class NewsDetailScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           GestureDetector(
-                            onTap: () => Navigator.of(context).pop(),
-                            child: Icon(Icons.arrow_back, size: 30,)
-                            ),
+                              onTap: () => Navigator.of(context).pop(),
+                              child: Icon(
+                                Icons.arrow_back,
+                                size: 30,
+                              )),
                         ],
                       ),
                     ),
@@ -113,11 +121,15 @@ class NewsDetailScreen extends StatelessWidget {
                           'https://ps.w.org/avatar-3d-creator/assets/icon-256x256.png?rev=2648611',
                         ),
                       ),
-                      SizedBox(width: 10,),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Text("Name")
                     ],
                   ),
-                  const SizedBox(height: 10,),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [

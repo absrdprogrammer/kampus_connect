@@ -75,6 +75,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  Stream<DocumentSnapshot> getProfileImg() {
+    return FirebaseFirestore.instance
+        .collection('Users')
+        .doc(database.user!.email)
+        .snapshots();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -216,61 +223,73 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: ListView(
           children: [
             Center(
-              child: Stack(children: [
-                Container(
-                  width: 130.0,
-                  height: 130.0,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black45,
-                        offset: Offset(0, 2),
-                        blurRadius: 6.0,
-                      ),
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    child: selectedImage != null &&
-                            selectedImage!.isAbsolute == true &&
-                            selectedImage!.path.isNotEmpty
-                        ? ClipOval(
-                            child: Image.file(
-                              selectedImage!,
-                              height: 130,
-                              width: 130,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : ClipOval(
-                            child: Image(
-                              image: NetworkImage(
-                                  'https://cdn3d.iconscout.com/3d/premium/thumb/man-avatar-6299539-5187871.png'),
-                              fit: BoxFit.cover,
+              child: StreamBuilder(
+                stream: getProfileImg(),
+                builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (!snapshot.hasData || !snapshot.data!.exists) {
+                      return Text(
+                          'Document does not exist'); // Menangani kasus dokumen tidak ada
+                    } else {
+                      return Stack(children: [
+                        Container(
+                          width: 130.0,
+                          height: 130.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.grey.shade400, width: 4)
+                          ),
+                          child: CircleAvatar(
+                            child: selectedImage != null &&
+                                    selectedImage!.isAbsolute == true &&
+                                    selectedImage!.path.isNotEmpty
+                                ? ClipOval(
+                                    child: Image.file(
+                                      selectedImage!,
+                                      height: 130,
+                                      width: 130,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : ClipOval(
+                                    child: Image(
+                                      height: 130,
+                                      width: 130,
+                                      image: NetworkImage(
+                                          profileImg),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: getImage,
+                            child: Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border:
+                                      Border.all(width: 4, color: Colors.white),
+                                  color: Colors.blue),
+                              child: const Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: getImage,
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(width: 4, color: Colors.white),
-                          color: Colors.blue),
-                      child: const Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                )
-              ]),
+                        )
+                      ]);
+                    }
+                  
+                }
+              ),
             ),
             const SizedBox(
               height: 40,
@@ -381,7 +400,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            foregroundColor: Colors.blue.shade800,
+                            foregroundColor: Colors.blue,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8)),
