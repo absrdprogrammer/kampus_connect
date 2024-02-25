@@ -87,22 +87,46 @@ class _PostPageState extends State<PostPage> {
 
       await newPostRef.set({
         'postId': newPostRef.id,
+        'creatorId': database.user!.uid,
         'imgUrl': imageUrl,
         'title': title,
         'desc': description,
         'timestamp': Timestamp.now().toDate()
       });
 
-      // DocumentReference documentRef =
-      //     await FirebaseFirestore.instance.collection('Informations').add({
-      //   'imgUrl': imageUrl,
-      //   'title': title,
-      //   'desc': description,
-      //   'timestamp': Timestamp.now().toDate()
-      // });
+      // Membuat referensi untuk dokumen creator
+      DocumentReference creatorRef = FirebaseFirestore.instance
+          .collection("Creators")
+          .doc(database.user!.uid);
 
-      // String documentId = documentRef.id;
-      // print('Added document with ID: $documentId');
+      // Mengecek apakah dokumen sudah ada atau belum
+      creatorRef.get().then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          // Jika dokumen sudah ada, lakukan increment pada totalPost
+          creatorRef.update({
+            'totalPosts': FieldValue.increment(1),
+          }).then((_) {
+            print('Total posts updated successfully!');
+          }).catchError((error) {
+            print('Error updating total posts: $error');
+          });
+        } else {
+          // Jika dokumen belum ada, buat dokumen baru
+          creatorRef.set({
+            'username': database.user!.displayName,
+            'totalViews': 0,
+            'totalPosts': 1,
+            'profileImg':
+                'https://cdn3d.iconscout.com/3d/premium/thumb/man-avatar-6299539-5187871.png'
+          }).then((_) {
+            print('Creator document created successfully!');
+          }).catchError((error) {
+            print('Error creating creator document: $error');
+          });
+        }
+      }).catchError((error) {
+        print('Error getting creator document: $error');
+      });
 
       setState(() {});
       Navigator.pushReplacement(

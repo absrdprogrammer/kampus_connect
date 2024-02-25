@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:kampus_connect/database/firestore.dart';
 import 'package:kampus_connect/pages/edit_profile.dart';
 import 'package:kampus_connect/pages/login.dart';
+import 'package:kampus_connect/pages/verify_email.dart';
 import 'package:kampus_connect/widgets/profile_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
@@ -65,12 +66,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     controller: _scrollController,
                     headerSliverBuilder: (context, innerBoxIsScrolled) => [
                           SliverAppBar(
-                            leading: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  LineAwesomeIcons.angle_left,
-                                  color: Colors.white,
-                                )),
                             pinned: true,
                             floating: true,
                             backgroundColor: _isShrink
@@ -100,10 +95,29 @@ class BottomSheet extends StatefulWidget {
 class _BottomSheetState extends State<BottomSheet> {
   FirestoreDatabase database = FirestoreDatabase();
   String profileImg = '';
+  String university = '';
+
+  void loadUserData() async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(database.user!.email)
+          .get();
+
+      if (userSnapshot.exists) {
+        setState(() {
+          university = userSnapshot['university'] ?? '';
+        });
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    loadUserData();
     getProfileImg();
   }
 
@@ -137,10 +151,19 @@ class _BottomSheetState extends State<BottomSheet> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  const SizedBox(
+                    height: 10,
+                  ),
                   Text(database.user!.displayName.toString(),
                       style: TextStyle(
                           color: Color.fromARGB(255, 25, 25, 34),
                           fontSize: 32,
+                          fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10.0),
+                  Text(university,
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 25, 25, 34),
+                          fontSize: 20,
                           fontWeight: FontWeight.bold)),
                   const SizedBox(height: 24.0),
                   Container(
@@ -207,6 +230,58 @@ class _BottomSheetState extends State<BottomSheet> {
                           onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
+                                  builder: (context) => const VerifyPage())),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(20)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        blurRadius: 16.0,
+                                        color: Colors.black.withOpacity(0.04),
+                                        spreadRadius: 16.0,
+                                        offset: const Offset(0, 2))
+                                  ],
+                                  color: Colors.white),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 16.0),
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8)),
+                                            color: Color.fromARGB(
+                                                48, 35, 148, 253)),
+                                        child: const Icon(
+                                          LineAwesomeIcons.check_circle,
+                                          color:
+                                              Color.fromARGB(255, 35, 148, 253),
+                                        )),
+                                    const SizedBox(width: 12),
+                                    const Expanded(
+                                        child: Text("Verify Email",
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 25, 25, 34),
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold))),
+                                    const Icon(
+                                      LineAwesomeIcons.angle_right,
+                                      color: Color.fromARGB(255, 35, 148, 253),
+                                    )
+                                  ])),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        GestureDetector(
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
                                   builder: (context) =>
                                       const EditProfilePage())),
                           child: Container(
@@ -253,7 +328,62 @@ class _BottomSheetState extends State<BottomSheet> {
                                     )
                                   ])),
                         ),
-                        const SizedBox(height: 18.0),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) =>
+                            //             const EditProfilePage()));
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(20)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        blurRadius: 16.0,
+                                        color: Colors.black.withOpacity(0.04),
+                                        spreadRadius: 16.0,
+                                        offset: const Offset(0, 2))
+                                  ],
+                                  color: Colors.white),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 16.0),
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8)),
+                                            color: Color.fromARGB(
+                                                48, 35, 148, 253)),
+                                        child: const Icon(
+                                          LineAwesomeIcons.bullhorn,
+                                          color:
+                                              Color.fromARGB(255, 35, 148, 253),
+                                        )),
+                                    const SizedBox(width: 8),
+                                    const Expanded(
+                                        child: Text("Feedback and Report",
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 25, 25, 34),
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold))),
+                                    const Icon(
+                                      LineAwesomeIcons.angle_right,
+                                      color: Color.fromARGB(255, 35, 148, 253),
+                                    )
+                                  ])),
+                        ),
+                        const SizedBox(height: 8.0),
                         Container(
                             decoration: BoxDecoration(
                                 borderRadius:
@@ -332,14 +462,9 @@ class _BottomSheetState extends State<BottomSheet> {
                           width: 130.0,
                           height: 130.0,
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black45,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: Colors.grey.shade400, width: 4)),
                           child: ClipOval(
                             child: Container(
                               color: Colors
@@ -354,7 +479,6 @@ class _BottomSheetState extends State<BottomSheet> {
                       ],
                     ),
                   );
-
                 }
               }),
         ]);
