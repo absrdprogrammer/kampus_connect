@@ -96,6 +96,8 @@ class _BottomSheetState extends State<BottomSheet> {
   FirestoreDatabase database = FirestoreDatabase();
   String profileImg = '';
   String university = '';
+  String totalPosts = '0';
+  String totalViews = '0';
 
   void loadUserData() async {
     try {
@@ -104,9 +106,21 @@ class _BottomSheetState extends State<BottomSheet> {
           .doc(database.user!.email)
           .get();
 
+      DocumentSnapshot userSnapshot2 = await FirebaseFirestore.instance
+          .collection('Creators')
+          .doc(database.user!.uid)
+          .get();
+
       if (userSnapshot.exists) {
         setState(() {
           university = userSnapshot['university'] ?? '';
+        });
+      }
+
+      if (userSnapshot2.exists) {
+        setState(() {
+          totalPosts = userSnapshot2['totalPosts'].toString() ?? '0';
+          totalViews = userSnapshot2['totalViews'].toString() ?? '0';
         });
       }
     } catch (e) {
@@ -155,13 +169,13 @@ class _BottomSheetState extends State<BottomSheet> {
                     height: 10,
                   ),
                   Text(database.user!.displayName.toString(),
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Color.fromARGB(255, 25, 25, 34),
                           fontSize: 32,
                           fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10.0),
                   Text(university,
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Color.fromARGB(255, 25, 25, 34),
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
@@ -187,8 +201,8 @@ class _BottomSheetState extends State<BottomSheet> {
                                   style: TextStyle(
                                       color: Colors.white.withOpacity(0.65),
                                       fontSize: 18)),
-                              const Text("15",
-                                  style: TextStyle(
+                              Text(totalViews,
+                                  style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold))
@@ -213,8 +227,8 @@ class _BottomSheetState extends State<BottomSheet> {
                                   style: TextStyle(
                                       color: Colors.white.withOpacity(0.65),
                                       fontSize: 18)),
-                              const Text("10",
-                                  style: TextStyle(
+                              Text(totalPosts,
+                                  style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold))
@@ -384,59 +398,68 @@ class _BottomSheetState extends State<BottomSheet> {
                                   ])),
                         ),
                         const SizedBox(height: 8.0),
-                        Container(
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(20)),
-                                boxShadow: [
-                                  BoxShadow(
-                                      blurRadius: 16.0,
-                                      color: Colors.black.withOpacity(0.04),
-                                      spreadRadius: 16.0,
-                                      offset: const Offset(0, 2))
-                                ],
-                                color: Colors.white),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 16.0),
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                      width: 32,
-                                      height: 32,
-                                      decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(8)),
+                        GestureDetector(
+                          onTap: () {
+                            FirebaseAuth.instance.signOut();
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginPage()));
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      const BorderRadius.all(Radius.circular(20)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        blurRadius: 16.0,
+                                        color: Colors.black.withOpacity(0.04),
+                                        spreadRadius: 16.0,
+                                        offset: const Offset(0, 2))
+                                  ],
+                                  color: Colors.white),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 16.0),
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8)),
+                                            color:
+                                                Color.fromARGB(48, 35, 148, 253)),
+                                        child: const Icon(
+                                          LineAwesomeIcons.alternate_sign_out,
                                           color:
-                                              Color.fromARGB(48, 35, 148, 253)),
+                                              Color.fromARGB(255, 35, 148, 253),
+                                        )),
+                                    const SizedBox(width: 12),
+                                    const Expanded(
+                                        child: Text("Logout",
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 25, 25, 34),
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold))),
+                                    GestureDetector(
+                                      onTap: () {
+                                        FirebaseAuth.instance.signOut();
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const LoginPage()));
+                                      },
                                       child: const Icon(
-                                        LineAwesomeIcons.alternate_sign_out,
-                                        color:
-                                            Color.fromARGB(255, 35, 148, 253),
-                                      )),
-                                  const SizedBox(width: 12),
-                                  const Expanded(
-                                      child: Text("Logout",
-                                          style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 25, 25, 34),
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.bold))),
-                                  GestureDetector(
-                                    onTap: () {
-                                      FirebaseAuth.instance.signOut();
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const LoginPage()));
-                                    },
-                                    child: const Icon(
-                                      LineAwesomeIcons.angle_right,
-                                      color: Color.fromARGB(255, 35, 148, 253),
-                                    ),
-                                  )
-                                ]))
+                                        LineAwesomeIcons.angle_right,
+                                        color: Color.fromARGB(255, 35, 148, 253),
+                                      ),
+                                    )
+                                  ])),
+                        )
                       ])
                 ]),
           ),
@@ -444,11 +467,11 @@ class _BottomSheetState extends State<BottomSheet> {
               stream: getProfileImg(),
               builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return Text(
+                  return const Text(
                       'Document does not exist'); // Menangani kasus dokumen tidak ada
                 } else {
                   profileImg = snapshot.data!['profileImg'] ?? '';
@@ -467,8 +490,7 @@ class _BottomSheetState extends State<BottomSheet> {
                                   color: Colors.grey.shade400, width: 4)),
                           child: ClipOval(
                             child: Container(
-                              color: Colors
-                                  .white, // Menambahkan latar belakang putih di sekitar gambar
+                              color: Colors.blue,
                               child: Image(
                                 image: NetworkImage(profileImg),
                                 fit: BoxFit.cover,

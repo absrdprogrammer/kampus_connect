@@ -204,13 +204,16 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   final message = messages[index];
                   String messageText = message['message'];
           
-                  return ChatBubble(
-                    chatMessage: ChatMessage(
-                      message: messageText,
-                      type: database.user!.uid != message['senderId']
-                          ? MessageType.Receiver
-                          : MessageType.Sender,
-                          username: message['username'] ?? 'Anonymous',
+                  return GestureDetector(
+                    onLongPress: () {},
+                    child: ChatBubble(
+                      chatMessage: ChatMessage(
+                        message: messageText,
+                        type: database.user!.uid != message['senderId']
+                            ? MessageType.Receiver
+                            : MessageType.Sender,
+                            username: message['username'] ?? 'Anonymous',
+                      ),
                     ),
                   );
                 },

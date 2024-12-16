@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Information {
-  // final String creatorId;
+  final String creatorId;
   final String infoId;
   final String imgUrl;
   final String title;
@@ -10,7 +10,7 @@ class Information {
 
   Information(
       {
-      // required this.creatorId, 
+      required this.creatorId,
       required this.infoId,
       required this.imgUrl,
       required this.title,

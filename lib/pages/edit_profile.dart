@@ -104,6 +104,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
             .collection('Users')
             .doc(emailData)
             .update({'profileImg': imageUrl});
+
+        DocumentReference creatorRef = FirebaseFirestore.instance
+            .collection("Creators")
+            .doc(database.user!.uid);
+
+        creatorRef.get().then((DocumentSnapshot documentSnapshot) {
+          if (documentSnapshot.exists) {
+            creatorRef.update({'profileImg': imageUrl});
+          }
+        });
       } on FirebaseAuthException catch (e) {
         displayMessageToUser(e.code, context);
       }
@@ -116,6 +126,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
             .collection('Users')
             .doc(emailData)
             .update({'username': username});
+
+        DocumentReference creatorRef = FirebaseFirestore.instance
+            .collection("Creators")
+            .doc(database.user!.uid);
+
+        creatorRef.get().then((DocumentSnapshot documentSnapshot) {
+          if (documentSnapshot.exists) {
+            creatorRef.update({'username': username});
+          }
+        });
       } on FirebaseAuthException catch (e) {
         displayMessageToUser(e.code, context);
       }
@@ -164,8 +184,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         displayMessageToUser(e.code, context);
       }
     }
-
-    setState(() {});
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -213,7 +231,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -224,9 +241,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           children: [
             Center(
               child: StreamBuilder(
-                stream: getProfileImg(),
-                builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+                  stream: getProfileImg(),
+                  builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircularProgressIndicator();
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
@@ -239,9 +256,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           width: 130.0,
                           height: 130.0,
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.grey.shade400, width: 4)
-                          ),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: Colors.grey.shade400, width: 4)),
                           child: CircleAvatar(
                             child: selectedImage != null &&
                                     selectedImage!.isAbsolute == true &&
@@ -258,8 +275,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                     child: Image(
                                       height: 130,
                                       width: 130,
-                                      image: NetworkImage(
-                                          profileImg),
+                                      image: NetworkImage(profileImg),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -287,9 +303,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         )
                       ]);
                     }
-                  
-                }
-              ),
+                  }),
             ),
             const SizedBox(
               height: 40,
@@ -368,6 +382,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: TextField(
+                      enabled: false,
                       controller: emailController,
                       maxLines: null,
                       minLines: 1,

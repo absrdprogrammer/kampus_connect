@@ -78,10 +78,10 @@ class FeedPage extends StatelessWidget {
                   document.data() as Map<String, dynamic>;
               Timestamp currentTime = Timestamp.now();
               return Post(
+                profileImg: data['profileImg'],
                   date: data['timeStamp'] ?? currentTime,
                   postId: data['postId'],
                   userId: data['userId'],
-                  username: data['username'],
                   content: data['content'],
                   likes: data['likes'],
                   comments: data['comments']);
@@ -94,8 +94,16 @@ class FeedPage extends StatelessWidget {
                 itemBuilder: (context, index) {
                   Post post = posts[index];
 
-                  if (post.userId == database.user!.uid) {
-                    isCreator = true;
+                  bool isCreator = (post.userId == database.user!.uid);
+
+                  Future<DocumentSnapshot> getCreatorData(
+                      String creatorId) async {
+                    DocumentSnapshot creatorSnapshot = await FirebaseFirestore
+                        .instance
+                        .collection('Creators')
+                        .doc(creatorId)
+                        .get();
+                    return creatorSnapshot;
                   }
 
                   DateTime now = DateTime.now();
@@ -113,6 +121,30 @@ class FeedPage extends StatelessWidget {
                     date = formatter.format(DateTime.fromMicrosecondsSinceEpoch(
                         post.date.microsecondsSinceEpoch));
                   }
+
+                  return FutureBuilder(
+                            future: getCreatorData(post.userId),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator();
+                              }
+
+                              if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              }
+
+                              if (!snapshot.hasData || !snapshot.data!.exists) {
+                                return Text('Creator data not found');
+                              }
+
+                              // Dapatkan data creator
+                              Map<String, dynamic> creatorData =
+                                  snapshot.data!.data() as Map<String, dynamic>;
+
+                              // Dapatkan informasi yang Anda butuhkan
+                              String username = creatorData['username'];
+                              String creatorProfile = creatorData['profileImg'];
 
                   return Padding(
                     padding:
@@ -154,20 +186,20 @@ class FeedPage extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    child: const CircleAvatar(
+                                    child: CircleAvatar(
                                       child: ClipOval(
                                         child: Image(
                                           height: 50.0,
                                           width: 50.0,
-                                          image: AssetImage(
-                                              "assets/images/hello-image.png"),
+                                          image: NetworkImage(
+                                              creatorProfile),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
                                   ),
                                   title: Text(
-                                    post.username,
+                                    username,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -222,16 +254,7 @@ class FeedPage extends StatelessWidget {
                                 ),
                                 InkWell(
                                   onDoubleTap: () => print('Like post'),
-                                  onTap: () {
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (_) => ViewPostScreen(
-                                    //       post: posts[index],
-                                    //     ),
-                                    //   ),
-                                    // );
-                                  },
+                                  onTap: () {},
                                   child: Container(
                                     margin: const EdgeInsets.all(10.0),
                                     width: double.infinity,
@@ -255,7 +278,7 @@ class FeedPage extends StatelessWidget {
                                         children: <Widget>[
                                           IconButton(
                                             icon: const Icon(
-                                                Icons.chat_bubble_outline),
+                                                CupertinoIcons.chat_bubble),
                                             iconSize: 30.0,
                                             onPressed: () {
                                               Navigator.push(
@@ -263,13 +286,14 @@ class FeedPage extends StatelessWidget {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           ViewPostPage(
+                                                            profileImg: creatorProfile,
                                                             date: date,
                                                             comments:
                                                                 post.comments,
                                                             content:
                                                                 post.content,
                                                             username:
-                                                                post.username,
+                                                                username,
                                                             likes: post.likes,
                                                             postId: post.postId,
                                                           )));
@@ -295,7 +319,7 @@ class FeedPage extends StatelessWidget {
                     ),
                   );
                 });
-          }),
-    );
+          });
+  }));
   }
 }

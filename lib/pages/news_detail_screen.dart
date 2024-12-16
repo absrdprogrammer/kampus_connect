@@ -10,14 +10,17 @@ class NewsDetailScreen extends StatelessWidget {
   final title;
   final desc;
   final date;
+  final name;
+  final profile;
   const NewsDetailScreen(
       {Key? key,
       required this.imgUrl,
       required this.title,
       required this.desc,
-      required this.date})
+      required this.date, 
+      required this.name, 
+      required this.profile})
       : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -111,20 +114,20 @@ class NewsDetailScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       CircleAvatar(
                         radius: 13,
                         backgroundColor: kBlue,
                         backgroundImage: NetworkImage(
-                          'https://ps.w.org/avatar-3d-creator/assets/icon-256x256.png?rev=2648611',
+                          profile,
                         ),
                       ),
                       SizedBox(
                         width: 10,
                       ),
-                      Text("Name")
+                      Text(name)
                     ],
                   ),
                   const SizedBox(

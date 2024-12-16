@@ -2,17 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kampus_connect/auth/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:kampus_connect/pages/edit_profile.dart';
-import 'package:kampus_connect/pages/event.dart';
-import 'package:kampus_connect/pages/feed_page.dart';
-import 'package:kampus_connect/pages/forgot_password.dart';
 import 'package:kampus_connect/pages/home.dart';
 import 'package:kampus_connect/pages/login.dart';
-import 'package:kampus_connect/pages/onboarding.dart';
-import 'package:kampus_connect/pages/profile.dart';
 import 'package:kampus_connect/pages/register.dart';
-import 'package:kampus_connect/pages/room_list.dart';
-import 'package:kampus_connect/pages/room_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {

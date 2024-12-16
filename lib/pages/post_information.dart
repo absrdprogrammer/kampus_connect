@@ -26,6 +26,7 @@ class _PostPageState extends State<PostPage> {
   bool isTapped = false;
   String title = '';
   String description = '';
+  String profileImg = '';
 
   File selectedImage = File('');
   CrudMethods crudMethods = CrudMethods();
@@ -38,6 +39,23 @@ class _PostPageState extends State<PostPage> {
       setState(() {
         selectedImage = File(pickedFile.path);
       });
+    }
+  }
+
+  void loadUserData() async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(database.user!.email)
+          .get();
+
+      if (userSnapshot.exists) {
+        setState(() {
+          profileImg = userSnapshot['profileImg'] ?? '';
+        });
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
     }
   }
 
@@ -66,11 +84,10 @@ class _PostPageState extends State<PostPage> {
           });
     } else {
       showDialog(
-        barrierDismissible: false,
+          barrierDismissible: false,
           context: context,
           builder: (context) => const Center(
-                child: CircularProgressIndicator(
-                ),
+                child: CircularProgressIndicator(),
               ));
       Reference storageReference = FirebaseStorage.instance
           .ref()
@@ -117,7 +134,7 @@ class _PostPageState extends State<PostPage> {
             'totalViews': 0,
             'totalPosts': 1,
             'profileImg':
-                'https://cdn3d.iconscout.com/3d/premium/thumb/man-avatar-6299539-5187871.png'
+                profileImg
           }).then((_) {
             print('Creator document created successfully!');
           }).catchError((error) {
@@ -134,6 +151,12 @@ class _PostPageState extends State<PostPage> {
         MaterialPageRoute(builder: (context) => const InformationPage()),
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
   }
 
   @override

@@ -6,6 +6,7 @@ import 'package:kampus_connect/pages/view_post.dart';
 import 'package:kampus_connect/widgets/edit_post.dart';
 
 class FeedCard extends StatefulWidget {
+  final String profileImg;
   final String username;
   final String content;
   final String postId;
@@ -15,6 +16,7 @@ class FeedCard extends StatefulWidget {
   final String date;
   FeedCard(
       {super.key,
+      required this.profileImg,
       required this.username,
       required this.content,
       required this.postId,
@@ -78,12 +80,12 @@ class _FeedCardState extends State<FeedCard> {
                           ),
                         ],
                       ),
-                      child: const CircleAvatar(
+                      child: CircleAvatar(
                         child: ClipOval(
                           child: Image(
                             height: 50.0,
                             width: 50.0,
-                            image: AssetImage("assets/images/hello-image.png"),
+                            image: NetworkImage(widget.profileImg),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -160,9 +162,11 @@ class _FeedCardState extends State<FeedCard> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25.0),
                       ),
-                      child: Text(widget.content,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,),
+                      child: Text(
+                        widget.content,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                   Padding(
@@ -180,6 +184,7 @@ class _FeedCardState extends State<FeedCard> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => ViewPostPage(
+                                              profileImg: widget.profileImg,
                                               date: widget.date,
                                               comments: widget.comments,
                                               content: widget.content,

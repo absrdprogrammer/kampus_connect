@@ -1,19 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:kampus_connect/constants/app_styles.dart';
 import 'package:kampus_connect/constants/size_config.dart';
 import 'package:kampus_connect/database/firestore.dart';
 import 'package:kampus_connect/models/information.dart';
-import 'package:kampus_connect/models/news.dart';
-import 'package:kampus_connect/models/post.dart';
-import 'package:kampus_connect/pages/chat_detail_page.dart';
 import 'package:kampus_connect/pages/event.dart';
 import 'package:kampus_connect/pages/feed_page.dart';
 import 'package:kampus_connect/pages/job/job_screen.dart';
@@ -23,9 +16,6 @@ import 'package:kampus_connect/pages/news_list.dart';
 import 'package:kampus_connect/pages/post_information.dart';
 import 'package:kampus_connect/pages/profile.dart';
 import 'package:kampus_connect/pages/social.dart';
-import 'package:kampus_connect/widgets/announcement_modal.dart';
-import 'package:kampus_connect/widgets/edit.dart';
-import 'package:kampus_connect/widgets/feed_card.dart';
 
 class InformationPage extends StatefulWidget {
   const InformationPage({Key? key}) : super(key: key);
@@ -37,24 +27,12 @@ class InformationPage extends StatefulWidget {
 class _InformationPageState extends State<InformationPage> {
   FirestoreDatabase database = FirestoreDatabase();
   String role = '';
-  bool isAdmin = false;
-
-  @override
-  void initState() {
-    database.checkUser().then((value) {
-      setState(() {
-        role = value;
-        if (role == 'admin') {
-          isAdmin = true;
-        }
-        print(isAdmin);
-      });
-    });
-
-    super.initState();
-  }
 
   int _currentPageIndex = 0;
+
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,8 +120,9 @@ class _HomePageState extends State<HomePage> {
   DateFormat secondFormatter = DateFormat('d LLLL y');
 
   String role = '';
-  bool isAdmin = false;
   String profileImg = '';
+  String creatorName = '';
+  String creatorProfile = '';
 
   void loadUserData() async {
     try {
@@ -162,28 +141,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Helper method to load the current post content
-  Future<void> loadPost(postId) async {
-    CollectionReference posts =
-        FirebaseFirestore.instance.collection('Annoucements');
-    DocumentReference postRef = posts.doc(postId);
-    DocumentSnapshot postSnapshot = await postRef.get();
-
-    print(postSnapshot.data());
-    if (postSnapshot.exists) {
-      Map<String, dynamic> postData =
-          postSnapshot.data() as Map<String, dynamic>;
-
-      titleController = TextEditingController(text: postData['title']);
-      descController = TextEditingController(text: postData['content']);
-
-      // Perform the update
-      // await postRef.update(postData);
-    } else {
-      print('Post does not exist');
-    }
-  }
-
   void handleClick(String value) {
     switch (value) {
       case 'Logout':
@@ -195,6 +152,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    super.initState;
     loadUserData();
 
     Timestamp timestamp = Timestamp.now();
@@ -202,17 +160,6 @@ class _HomePageState extends State<HomePage> {
     DateFormat dateFormatter = DateFormat('EEEE, d LLLL yyyy');
     date = dateFormatter.format(dateTime);
     DateFormat formatter = DateFormat('d LLL');
-
-    database.checkUser().then((value) {
-      setState(() {
-        role = value;
-        if (role == 'admin') {
-          isAdmin = true;
-        }
-        print(isAdmin);
-      });
-    });
-    super.initState();
   }
 
   Stream<DocumentSnapshot> getProfileImg() {
@@ -238,35 +185,35 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   children: [
                     StreamBuilder(
-                      stream: getProfileImg(),
-                      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                        if (snapshot.connectionState ==
+                        stream: getProfileImg(),
+                        builder: (context,
+                            AsyncSnapshot<DocumentSnapshot> snapshot) {
+                          if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return CircularProgressIndicator();
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else if (!snapshot.hasData ||
                               !snapshot.data!.exists) {
-                            return Text(
-                                'Document does not exist'); // Menangani kasus dokumen tidak ada
+                            return Text('Document does not exist');
                           } else {
                             return Container(
-                          height: 51,
-                          width: 51,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(kBorderRadius),
-                            color: kLightBlue,
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                profileImg,
+                              height: 51,
+                              width: 51,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(kBorderRadius),
+                                color: kLightBlue,
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(
+                                    profileImg,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        );
+                            );
                           }
-                      }
-                    ),
+                        }),
                     const SizedBox(
                       width: 16,
                     ),
@@ -472,90 +419,6 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 20,
             ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     Text(
-            //       'Latest Feed',
-            //       style: kPoppinsBold.copyWith(
-            //         fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(
-            //   height: 20,
-            // ),
-            // SizedBox(
-            //     height: 200,
-            //     child: StreamBuilder(
-            //         stream: FirebaseFirestore.instance
-            //             .collection("Posts")
-            //             .orderBy('timeStamp', descending: true)
-            //             .snapshots(),
-            //         builder: (context, snapshot) {
-            //           if (snapshot.connectionState == ConnectionState.waiting) {
-            //             return const CircularProgressIndicator();
-            //           }
-
-            //           if (snapshot.hasError) {
-            //             return Text('Error: ${snapshot.error}');
-            //           }
-
-            //           List<Post> posts =
-            //               snapshot.data!.docs.map((DocumentSnapshot document) {
-            //             Map<String, dynamic> data =
-            //                 document.data() as Map<String, dynamic>;
-            //             Timestamp currentTime = Timestamp.now();
-            //             return Post(
-            //                 date: data['timeStamp'] ?? currentTime,
-            //                 postId: data['postId'],
-            //                 userId: data['userId'],
-            //                 username: data['username'],
-            //                 content: data['content'],
-            //                 likes: data['likes'],
-            //                 comments: data['comments']);
-            //           }).toList();
-
-            //           return ListView.builder(
-            //               shrinkWrap: true,
-            //               itemCount: posts.length,
-            //               scrollDirection: Axis.horizontal,
-            //               itemBuilder: (context, index) {
-            //                 Post post = posts[index];
-
-            //                 DateTime now = DateTime.now();
-            //                 final postDate = post.date.toDate();
-            //                 if (postDate.year == now.year &&
-            //                     postDate.month == now.month &&
-            //                     postDate.day == now.day) {
-            //                   date = 'Today';
-            //                 } else if (postDate.year == now.year &&
-            //                     postDate.month == now.month &&
-            //                     postDate.day == now.day - 1) {
-            //                   date = 'Yesterday';
-            //                 } else {
-            //                   DateFormat formatter = DateFormat('d LLL');
-            //                   date = formatter.format(
-            //                       DateTime.fromMicrosecondsSinceEpoch(
-            //                           post.date.microsecondsSinceEpoch));
-            //                 }
-
-            //                 return FeedCard(
-            //                   date: date,
-            //                   username: post.username,
-            //                   content: post.content,
-            //                   userId: post.userId,
-            //                   postId: post.postId,
-            //                   likes: post.likes,
-            //                   comments: post.comments,
-            //                 );
-            //               });
-            //         })),
-            // const SizedBox(
-            //   height: 20,
-            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -571,9 +434,7 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => InformationListPage(
-                                  isAdmin: isAdmin,
-                                )));
+                            builder: (context) => InformationListPage()));
                   },
                   child: Text(
                     'View all',
@@ -618,179 +479,301 @@ class _HomePageState extends State<HomePage> {
                     List<Information> informations =
                         snapshot.data!.docs.map((DocumentSnapshot document) {
                       Map<String, dynamic> data =
-                          document.data() as Map<String, dynamic>;
+                          document.data() as Map<String, dynamic>? ?? {};
                       return Information(
+                        creatorId: data['creatorId'],
                         infoId: data['postId'],
-                        date: data['timestamp'],
+                        date: data[
+                            'timestamp'], // Adjust the type conversion according to your needs
                         imgUrl: data['imgUrl'],
                         title: data['title'],
                         desc: data['desc'],
                       );
                     }).toList();
+
                     return ListView.builder(
                       shrinkWrap: true,
                       itemCount: informations.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         Information information = informations[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => NewsDetailScreen(
-                                          date: secondFormatter.format(DateTime
-                                              .fromMicrosecondsSinceEpoch(
-                                                  information.date
-                                                      .microsecondsSinceEpoch)),
-                                          imgUrl: information.imgUrl,
-                                          title: information.title,
-                                          desc: information.desc,
-                                        )));
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            margin: const EdgeInsets.only(
-                              right: 20,
-                            ),
-                            height: 304,
-                            width: 255,
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(kBorderRadius),
-                              color: kWhite,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: kDarkBlue.withOpacity(0.051),
-                                  offset: const Offset(0.0, 3.0),
-                                  blurRadius: 24.0,
-                                  spreadRadius: 0.0,
-                                )
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 164,
+
+                        bool isAdmin =
+                            (information.creatorId == database.user!.uid);
+
+                        Future<DocumentSnapshot> getCreatorData(
+                            String creatorId) async {
+                          DocumentSnapshot creatorSnapshot =
+                              await FirebaseFirestore.instance
+                                  .collection('Creators')
+                                  .doc(creatorId)
+                                  .get();
+                          return creatorSnapshot;
+                        }
+
+                        return FutureBuilder(
+                            future: getCreatorData(information.creatorId),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator();
+                              }
+
+                              if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              }
+
+                              if (!snapshot.hasData || !snapshot.data!.exists) {
+                                return Text('Creator data not found');
+                              }
+
+                              // Dapatkan data creator
+                              Map<String, dynamic> creatorData =
+                                  snapshot.data!.data() as Map<String, dynamic>;
+
+                              // Dapatkan informasi yang Anda butuhkan
+                              String creatorName = creatorData['username'];
+                              String creatorProfile = creatorData['profileImg'];
+                              return GestureDetector(
+                                onTap: () async {
+                                  try {
+                                    // Dapatkan referensi koleksi views di bawah dokumen postId
+                                    final CollectionReference viewsCollection =
+                                        FirebaseFirestore.instance
+                                            .collection('Informations')
+                                            .doc(information.infoId)
+                                            .collection('Views');
+
+                                    // Lakukan pengecekan apakah dokumen views untuk userId sudah ada
+                                    DocumentSnapshot viewDoc =
+                                        await viewsCollection
+                                            .doc(database.user!.uid)
+                                            .get();
+
+                                    // Update totalViews pada dokumen creator
+
+                                    if (!viewDoc.exists &&
+                                        information.creatorId !=
+                                            database.user!.uid) {
+                                      viewsCollection
+                                          .doc(database.user!.uid)
+                                          .set({'data': 'dummy'});
+                                      FirebaseFirestore.instance
+                                          .collection('Creators')
+                                          .doc(information.creatorId)
+                                          .update({
+                                        'totalViews': FieldValue.increment(1)
+                                      });
+                                    }
+                                  } catch (e) {
+                                    print('ErrorViews: $e');
+                                  }
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              NewsDetailScreen(
+                                                profile: creatorProfile,
+                                                name: creatorName,
+                                                date: secondFormatter.format(DateTime
+                                                    .fromMicrosecondsSinceEpoch(
+                                                        information.date
+                                                            .microsecondsSinceEpoch)),
+                                                imgUrl: information.imgUrl,
+                                                title: information.title,
+                                                desc: information.desc,
+                                              )));
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  margin: const EdgeInsets.only(
+                                    right: 20,
+                                  ),
+                                  height: 304,
+                                  width: 255,
                                   decoration: BoxDecoration(
                                     borderRadius:
                                         BorderRadius.circular(kBorderRadius),
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(
-                                        information.imgUrl,
-                                      ),
-                                    ),
+                                    color: kWhite,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: kDarkBlue.withOpacity(0.051),
+                                        offset: const Offset(0.0, 3.0),
+                                        blurRadius: 24.0,
+                                        spreadRadius: 0.0,
+                                      )
+                                    ],
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 18,
-                                ),
-                                Flexible(
-                                  child: Text(
-                                    information.desc,
-                                    style: kPoppinsBold.copyWith(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 3.5,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              'Posted:',
-                                              style: kPoppinsSemibold.copyWith(
-                                                fontSize: SizeConfig
-                                                        .blockSizeHorizontal! *
-                                                    3,
-                                              ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        height: 164,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                              kBorderRadius),
+                                          image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: NetworkImage(
+                                              information.imgUrl,
                                             ),
-                                            Text(
-                                              dateFormat.format(DateTime
-                                                  .fromMicrosecondsSinceEpoch(
-                                                      information.date
-                                                          .microsecondsSinceEpoch)),
-                                              style: kPoppinsRegular.copyWith(
-                                                color: kGrey,
-                                                fontSize: SizeConfig
-                                                        .blockSizeHorizontal! *
-                                                    3,
-                                              ),
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                    Visibility(
-                                      visible: isAdmin,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          showDialog(
-                                            builder: (context) => AlertDialog(
-                                              title:
-                                                  const Text('Are you sure?'),
-                                              content: const Text(
-                                                  'The content will be deleted.'),
-                                              actions: <Widget>[
-                                                ElevatedButton(
-                                                  onPressed: () => Navigator.pop(
-                                                      context), // Closes the dialog
-                                                  child: const Text('No'),
-                                                ),
-                                                ElevatedButton(
-                                                  onPressed: () {
-                                                    FirebaseFirestore.instance
-                                                        .collection(
-                                                            "Informations")
-                                                        .doc(information.infoId)
-                                                        .delete();
-                                                    setState(() {});
-
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text('Yes'),
-                                                ),
-                                              ],
-                                            ),
-                                            context: context,
-                                          );
-                                        },
-                                        child: Container(
-                                          height: 38,
-                                          width: 38,
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                kBorderRadius),
-                                            color: kLightWhite,
-                                          ),
-                                          child: SvgPicture.asset(
-                                            'assets/images/bin_icon.svg',
                                           ),
                                         ),
                                       ),
-                                    )
-                                  ],
+                                      const SizedBox(
+                                        height: 18,
+                                      ),
+                                      Flexible(
+                                        child: Text(
+                                          information.desc,
+                                          style: kPoppinsBold.copyWith(
+                                            fontSize: SizeConfig
+                                                    .blockSizeHorizontal! *
+                                                3.5,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 16,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Posted:',
+                                                    style: kPoppinsSemibold
+                                                        .copyWith(
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal! *
+                                                          3,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    dateFormat.format(DateTime
+                                                        .fromMicrosecondsSinceEpoch(
+                                                            information.date
+                                                                .microsecondsSinceEpoch)),
+                                                    style: kPoppinsRegular
+                                                        .copyWith(
+                                                      color: kGrey,
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal! *
+                                                          3,
+                                                    ),
+                                                  )
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                          Visibility(
+                                            visible: isAdmin,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                showDialog(
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                    title: const Text(
+                                                        'Are you sure?'),
+                                                    content: const Text(
+                                                        'The content will be deleted.'),
+                                                    actions: <Widget>[
+                                                      ElevatedButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                context), // Closes the dialog
+                                                        child: const Text('No'),
+                                                      ),
+                                                      ElevatedButton(
+                                                        onPressed: () {
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  "Informations")
+                                                              .doc(information
+                                                                  .infoId)
+                                                              .delete();
+
+                                                          // Membuat referensi untuk dokumen creator
+                                                          DocumentReference
+                                                              creatorRef =
+                                                              FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      "Creators")
+                                                                  .doc(database
+                                                                      .user!
+                                                                      .uid);
+
+                                                          // Mengecek apakah dokumen sudah ada atau belum
+                                                          creatorRef.get().then(
+                                                              (DocumentSnapshot
+                                                                  documentSnapshot) {
+                                                            if (documentSnapshot
+                                                                .exists) {
+                                                              // Jika dokumen sudah ada, lakukan increment pada totalPost
+                                                              creatorRef
+                                                                  .update({
+                                                                'totalPosts':
+                                                                    FieldValue
+                                                                        .increment(
+                                                                            -1),
+                                                              }).then((_) {
+                                                                print(
+                                                                    'Total posts updated successfully!');
+                                                              }).catchError(
+                                                                      (error) {
+                                                                print(
+                                                                    'Error updating total posts: $error');
+                                                              });
+                                                            }
+                                                          });
+                                                          setState(() {});
+
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child:
+                                                            const Text('Yes'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  context: context,
+                                                );
+                                              },
+                                              child: Container(
+                                                height: 38,
+                                                width: 38,
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          kBorderRadius),
+                                                  color: kLightWhite,
+                                                ),
+                                                child: SvgPicture.asset(
+                                                  'assets/images/bin_icon.svg',
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
+                              );
+                            });
                       },
                     );
                   }),

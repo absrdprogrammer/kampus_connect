@@ -23,24 +23,6 @@ class FirestoreDatabase {
     }
   }
 
-  // Future<String> checkCreator(String postId) async {
-  //   try {
-  //     CollectionReference users =
-  //         FirebaseFirestore.instance.collection('Users');
-  //     QuerySnapshot querySnapshot =
-  //         await users.where('postId', isEqualTo: postId).get();
-
-  //     if (querySnapshot.docs.isNotEmpty) {
-  //       String userId = querySnapshot.docs.first['userId'];
-  //       return userId;
-  //     } else {
-  //       return 'User tidak ditemukan';
-  //     }
-  //   } catch (e) {
-  //     print('Error: $e');
-  //     return 'Terjadi kesalahan';
-  //   }
-  // }
 
   final CollectionReference messages =
       FirebaseFirestore.instance.collection('Messages');
@@ -79,7 +61,7 @@ class FirestoreDatabase {
   Stream<QuerySnapshot> getRoomsStream() {
     final roomsStream = FirebaseFirestore.instance
         .collection("Rooms")
-        .orderBy("createdAt")
+        .orderBy("createdAt", descending: true)
         .snapshots();
 
     return roomsStream;
@@ -153,13 +135,14 @@ class FirestoreDatabase {
   //   return commentsStream;
   // }
 
-  Future<void> addPost(String content) async {
+  Future<void> addPost(String content, String profileImg) async {
     final CollectionReference postsCollection =
         FirebaseFirestore.instance.collection('Posts');
 
     final DocumentReference newPostRef = postsCollection.doc();
 
     await newPostRef.set({
+      'profileImg': profileImg,
       'postId': newPostRef.id,
       'username': user!.displayName,
       'userId': user!.uid,
@@ -170,7 +153,8 @@ class FirestoreDatabase {
     });
   }
 
-  Future<void> addEvent(String title, String address, String description, String date) async {
+  Future<void> addEvent(
+      String title, String address, String description, String date) async {
     final CollectionReference eventsCollection =
         FirebaseFirestore.instance.collection('Events');
 
@@ -265,6 +249,38 @@ class FirestoreDatabase {
     }
   }
 
+  void totalViews(
+      String postId, String userId, String creatorId) async {
+    try {
+      // Dapatkan referensi koleksi views di bawah dokumen postId
+      final CollectionReference viewsCollection = FirebaseFirestore.instance
+          .collection('Informations')
+          .doc(postId)
+          .collection('Views');
+
+      // Lakukan pengecekan apakah dokumen views untuk userId sudah ada
+      DocumentSnapshot viewDoc = await viewsCollection.doc(userId).get();
+
+      if (!viewDoc.exists) {
+        // Jika dokumen views untuk userId belum ada, buat dokumen tersebut
+        await viewsCollection.doc(userId).set({});
+
+        // Update totalViews pada dokumen creator
+        FirebaseFirestore.instance
+            .collection('Creators')
+            .doc(creatorId)
+            .update({'totalViews': FieldValue.increment(1)});
+
+        print('UserID $userId berhasil ditambahkan ke views.');
+      } else {
+        print('Dokumen views untuk UserID $userId sudah ada.');
+      }
+    } catch (e) {
+      print('ErrorViews: $e');
+    }
+  }
+
+
   Future<void> addComment(String postId, String commentText) async {
     final CollectionReference commentsCollection = FirebaseFirestore.instance
         .collection('Posts')
@@ -275,8 +291,7 @@ class FirestoreDatabase {
 
     await newCommentRef.set({
       'commentId': newCommentRef.id,
-      'username': user!.displayName,
-      'userId': user!.uid,
+      'email': user!.email,
       'comment': commentText,
       'likes': 0,
       'timeStamp': FieldValue.serverTimestamp(),

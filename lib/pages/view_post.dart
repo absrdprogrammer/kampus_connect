@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kampus_connect/constants/app_styles.dart';
@@ -7,6 +8,7 @@ import 'package:kampus_connect/database/firestore.dart';
 import 'package:kampus_connect/models/comment.dart';
 
 class ViewPostPage extends StatefulWidget {
+  final String profileImg;
   final String username;
   final String content;
   final String postId;
@@ -16,6 +18,7 @@ class ViewPostPage extends StatefulWidget {
 
   const ViewPostPage(
       {super.key,
+      required this.profileImg,
       required this.username,
       required this.content,
       required this.postId,
@@ -112,6 +115,7 @@ class _ViewPostPageState extends State<ViewPostPage> {
               }
 
               final post = snapshot.data!;
+
               if (!snapshot.hasData) {
                 return const Center(
                   child: Padding(
@@ -169,20 +173,20 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                         ),
                                       ],
                                     ),
-                                    child: const CircleAvatar(
+                                    child: CircleAvatar(
                                       child: ClipOval(
                                         child: Image(
                                           height: 50.0,
                                           width: 50.0,
-                                          image: AssetImage(
-                                              "assets/images/hello-image.png"),
+                                          image:
+                                              NetworkImage(widget.profileImg),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
                                   ),
                                   title: Text(
-                                    post['username'],
+                                    widget.username,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -228,7 +232,8 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                 Row(
                                   children: <Widget>[
                                     IconButton(
-                                      icon: const Icon(Icons.chat),
+                                      icon: const Icon(
+                                          CupertinoIcons.chat_bubble),
                                       iconSize: 30.0,
                                       onPressed: () {},
                                     ),
@@ -308,84 +313,135 @@ class _ViewPostPageState extends State<ViewPostPage> {
                               return CommentPost(
                                   date: data['timeStamp'] ?? currentTime,
                                   commentId: data['commentId'],
-                                  userId: data['userId'],
-                                  username: data['username'],
+                                  email: data['email'],
                                   comment: data['comment'],
                                   likes: data['likes']);
                             }).toList();
 
                             return SingleChildScrollView(
-                              padding: const EdgeInsets.only(top: 20),
-                              child: ListView.builder(
-                                  padding: const EdgeInsets.only(top: 0),
-                                  shrinkWrap: true,
-                                  itemCount: comments.length,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: (context, index) {
-                                    CommentPost comment = comments[index];
-                                    DateTime now = DateTime.now();
-                                    final commentsDate = comment.date.toDate();
-                                    if (commentsDate.year == now.year &&
-                                        commentsDate.month == now.month &&
-                                        commentsDate.day == now.day) {
-                                      date = timeFormatter.format(
-                                          DateTime.fromMicrosecondsSinceEpoch(
-                                              commentsDate
-                                                  .microsecondsSinceEpoch));
-                                    } else if (commentsDate.year == now.year &&
-                                        commentsDate.month == now.month &&
-                                        commentsDate.day == now.day - 1) {
-                                      date = 'yesterday';
-                                    } else {
-                                      date = dayMonthFormatter.format(
-                                          DateTime.fromMicrosecondsSinceEpoch(
-                                              commentsDate
-                                                  .microsecondsSinceEpoch));
-                                    }
-                                    return Column(
-                                      children: [
-                                        ListTile(
-                                            leading: Container(
-                                              width: 50.0,
-                                              height: 50.0,
-                                              decoration: const BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black45,
-                                                    offset: Offset(0, 2),
-                                                    blurRadius: 6.0,
-                                                  ),
-                                                ],
-                                              ),
-                                              child: const CircleAvatar(
-                                                child: ClipOval(
-                                                  child: Image(
-                                                    height: 50.0,
-                                                    width: 50.0,
-                                                    image: AssetImage(
-                                                        "assets/images/hello-image.png"),
-                                                    fit: BoxFit.cover,
-                                                  ),
+                                padding: const EdgeInsets.only(top: 20),
+                                child: ListView.builder(
+                                    padding: const EdgeInsets.only(top: 0),
+                                    shrinkWrap: true,
+                                    itemCount: comments.length,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: (context, index) {
+                                      CommentPost comment = comments[index];
+
+                                      Future<DocumentSnapshot> getCreatorData(
+                                          String creatorEmail) async {
+                                        DocumentSnapshot creatorSnapshot =
+                                            await FirebaseFirestore.instance
+                                                .collection('Users')
+                                                .doc(creatorEmail)
+                                                .get();
+                                        return creatorSnapshot;
+                                      }
+
+                                      return FutureBuilder(
+                                          future: getCreatorData(comment.email),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return CircularProgressIndicator();
+                                            }
+
+                                            if (snapshot.hasError) {
+                                              return Text(
+                                                  'Error: ${snapshot.error}');
+                                            }
+
+                                            if (!snapshot.hasData ||
+                                                !snapshot.data!.exists) {
+                                              return Text(
+                                                  'Creator data not found');
+                                            }
+
+                                            // Dapatkan data creator
+                                            Map<String, dynamic> creatorData =
+                                                snapshot.data!.data()
+                                                    as Map<String, dynamic>;
+
+                                            // Dapatkan informasi yang Anda butuhkan
+                                            String creatorName =
+                                                creatorData['username'];
+                                            String creatorProfile =
+                                                creatorData['profileImg'];
+
+                                            DateTime now = DateTime.now();
+                                            final commentsDate =
+                                                comment.date.toDate();
+                                            if (commentsDate.year == now.year &&
+                                                commentsDate.month ==
+                                                    now.month &&
+                                                commentsDate.day == now.day) {
+                                              date = timeFormatter.format(DateTime
+                                                  .fromMicrosecondsSinceEpoch(
+                                                      commentsDate
+                                                          .microsecondsSinceEpoch));
+                                            } else if (commentsDate.year ==
+                                                    now.year &&
+                                                commentsDate.month ==
+                                                    now.month &&
+                                                commentsDate.day ==
+                                                    now.day - 1) {
+                                              date = 'yesterday';
+                                            } else {
+                                              date = dayMonthFormatter.format(
+                                                  DateTime.fromMicrosecondsSinceEpoch(
+                                                      commentsDate
+                                                          .microsecondsSinceEpoch));
+                                            }
+                                            return Column(
+                                              children: [
+                                                ListTile(
+                                                    leading: Container(
+                                                      width: 50.0,
+                                                      height: 50.0,
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color:
+                                                                Colors.black45,
+                                                            offset:
+                                                                Offset(0, 2),
+                                                            blurRadius: 6.0,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: CircleAvatar(
+                                                        child: ClipOval(
+                                                          child: Image(
+                                                            height: 50.0,
+                                                            width: 50.0,
+                                                            image: NetworkImage(
+                                                                creatorProfile),
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    title: Text(
+                                                      creatorName,
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    subtitle:
+                                                        Text(comment.comment),
+                                                    trailing: Text(date)),
+                                                const Divider(
+                                                  thickness: 1,
                                                 ),
-                                              ),
-                                            ),
-                                            title: Text(
-                                              comment.username,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            subtitle: Text(comment.comment),
-                                            trailing: Text(date)),
-                                        const Divider(
-                                          thickness: 1,
-                                        ),
-                                      ],
-                                    );
-                                  }),
-                            );
+                                              ],
+                                            );
+                                          });
+                                    }));
                           }),
                     ),
                   ],

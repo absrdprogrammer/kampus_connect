@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kampus_connect/database/firestore.dart';
 import 'package:gap/gap.dart';
@@ -17,6 +18,24 @@ class _AddNewpostState extends State<AddNewPost> {
   FirestoreDatabase database = FirestoreDatabase();
 
   String post = '';
+  String profileImg = '';
+
+  void loadUserData() async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(database.user!.email)
+          .get();
+
+      if (userSnapshot.exists) {
+        setState(() {
+          profileImg = userSnapshot['profileImg'] ?? '';
+        });
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+    }
+  }
 
   void addPost() {
     if (post.trim() == '') {
@@ -40,7 +59,7 @@ class _AddNewpostState extends State<AddNewPost> {
             );
           });
     } else {
-      database.addPost(post);
+      database.addPost(post, profileImg);
 
       post = '';
       setState(() {});
