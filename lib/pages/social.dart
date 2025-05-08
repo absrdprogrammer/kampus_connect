@@ -23,24 +23,31 @@ class SocialPage extends StatefulWidget {
 class _InformationPageState extends State<SocialPage> {
   final isLiked = false;
 
+  void navigateToPage(Widget page) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-          appBar: AppBar(
-            title: const Row(
-              children: [
-                Text("Social Room"),
-              ],
-            ),
-          ),
-          backgroundColor: kLighterWhite,
-          body: const SocialHomePage(),
-        );
+      appBar: AppBar(
+        title: const Row(
+          children: [
+            Text("Social Room"),
+          ],
+        ),
+      ),
+      backgroundColor: kLighterWhite,
+      body: SocialHomePage(navigateToPage: navigateToPage),
+    );
   }
 }
 
 class SocialHomePage extends StatefulWidget {
-  const SocialHomePage({Key? key}) : super(key: key);
+  final Function(Widget page) navigateToPage;
+
+  const SocialHomePage({Key? key, required this.navigateToPage})
+      : super(key: key);
 
   @override
   State<SocialHomePage> createState() => _SocialHomePageState();
@@ -50,6 +57,10 @@ class _SocialHomePageState extends State<SocialHomePage> {
   DateFormat formatter = DateFormat('d LLL');
 
   String date = '';
+
+  void navigateToPage(Widget page) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +85,11 @@ class _SocialHomePageState extends State<SocialHomePage> {
               ],
             ),
             const SizedBox(height: 15),
-            const CommunityCard(
+            CommunityCard(
               title: "  Join The\nCommunity",
               text: "Join now",
-              page: ChatDetailPage(),
+              page: const ChatDetailPage(),
+              navigateToPage: widget.navigateToPage,
               imagePath: 'assets/images/connect-image.png',
             ),
             const SizedBox(
@@ -87,6 +99,7 @@ class _SocialHomePageState extends State<SocialHomePage> {
               title: "Find Your\n   Team",
               text: "Find now",
               page: ListRoomPage(),
+              navigateToPage: widget.navigateToPage,
               imagePath: 'assets/images/team-image.png',
             ),
           ],
@@ -100,12 +113,14 @@ class CommunityCard extends StatefulWidget {
   final String title;
   final String text;
   final page;
+  final Function(Widget page) navigateToPage;
   final String imagePath;
   const CommunityCard(
       {super.key,
       required this.title,
       required this.text,
       required this.page,
+      required this.navigateToPage,
       required this.imagePath});
 
   @override
@@ -156,8 +171,8 @@ class _CommunityCardState extends State<CommunityCard> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => widget.page));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => widget.page));
                   },
                   child: Container(
                     margin: const EdgeInsets.only(top: 10),
